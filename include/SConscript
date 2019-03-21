@@ -1,0 +1,90 @@
+
+##############################################################################
+#                                                                            #
+#                  IMPINJ CONFIDENTIAL AND PROPRIETARY                       #
+#                                                                            #
+# This source code is the sole property of Impinj, Inc.  Reproduction or     #
+# utilization of this source code in whole or in part is forbidden without   #
+# the prior written consent of Impinj, Inc.                                  #
+#                                                                            #
+# (c) Copyright Impinj, Inc. 2009. All rights reserved.                      #
+#                                                                            #
+##############################################################################
+
+
+##############################################################################
+#
+# $Id: SConscript 60393 2009-10-27 20:32:09Z dshaheen $
+# 
+#  Description: Build script that builds the rfid library
+#      
+#
+##############################################################################
+
+
+Import("env", "buildos", "transportdir")
+
+# Make a copy of the environment
+localEnv = env.Copy()
+
+# The source files used to build the library
+sources = ["mac.cpp",
+           "mac_transport.cpp",
+           "mac_transport_live.cpp",
+           "radio.cpp",
+           "rfid_library.cpp",
+           "tracer_console.cpp",
+           "tracer_file.cpp"]
+
+# Add project-specific, platform-independend include directories, libraries,
+# library search paths, and preprocessor defines
+localEnv["CPPPATH"] += [ "include",
+                         "include/"+buildos,
+                         "../transport/library/"+transportdir ]
+localEnv["LIBS"]    += [ "cpl",
+                         "rfidtx" ]
+localEnv["LIBPATH"] += [ "../transport/library/"+transportdir,
+                         "../compat/"+buildos ]
+localEnv["CPPDEFINES"].update({ "RFID_LIBRARY_EXTENSIONS" : 1 })
+
+# Linux-specific build flags
+if "linux" == buildos:
+    localEnv["CPPDEFINES"].update({ "_GNU_SOURCE" : 1 })
+#
+# Windows-specific build flags
+elif "windows" == buildos:
+    # Add Windows-specific preprocessor defines and sources
+    localEnv["CPPDEFINES"].update( { "RFID_LIBRARY_EXPORTS" : 1,
+                                     "_CRT_SECURE_NO_DEPRECATE" : 1 } )
+    sources += [ "windows/rfid_library_dll.cpp",
+                 "windows/resource/rfid_library.res" ]
+    #
+    # Add DLL-specific preprocessor defines
+    localEnv["CPPDEFINES"].update(localEnv["COMMONDLLDEFS"])
+    #
+    # Turn on C++ exception handling
+    localEnv["CCFLAGS"] += " /EHsc"
+    #
+    # Add the resources and resource paths to the build
+    localEnv.RES("windows/resource/rfid_library.rc",
+                 RCFLAGS = r" /ihost\include /ihost\rfid_library\include")
+    #
+    # Set the program database for debug symbols
+    if env["debug"]:
+        localEnv["PDB"] = "rfid.pdb"
+    else:
+        localEnv["PDB"] = ""
+    #
+    # If we are compiling for CE, then set the entry point
+    if env["ce"]:
+        localEnv["LINKFLAGS"] += env["cedllentry"]
+    #
+    # Otherwise, if we are compiling debug, then make sure to use the debug
+    # version of the C runtime library
+    #elif env["debug"]:
+    #    localEnv["LINKFLAGS"] += " /nodefaultlib:libcmt libcmtd.lib "
+
+# Build the shared library
+localEnv.SharedLibrary("rfid", sources)
+
+SConscript([ "samples/SConscript" ])

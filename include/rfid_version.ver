@@ -1,0 +1,74 @@
+/*
+ *****************************************************************************
+ *                                                                           *
+ *                 IMPINJ CONFIDENTIAL AND PROPRIETARY                       *
+ *                                                                           *
+ * This source code is the sole property of Impinj, Inc.  Reproduction or    *
+ * utilization of this source code in whole or in part is forbidden without  *
+ * the prior written consent of Impinj, Inc.                                 *
+ *                                                                           *
+ * (c) Copyright Impinj, Inc. 2009. All rights reserved.                     *
+ *                                                                           *
+ *****************************************************************************
+ */
+
+/*
+ *****************************************************************************
+ *
+ * $Id: rfid_version.ver 59725 2009-09-03 20:23:46Z dshaheen $
+ * 
+ * Description: 
+ *
+ *****************************************************************************
+ */
+
+
+VS_VERSION_INFO         VERSIONINFO
+FILEVERSION             VER_FILEVERSION
+PRODUCTVERSION          VER_PRODUCTVERSION
+FILEFLAGSMASK           VER_FILEFLAGSMASK
+FILEFLAGS               VER_FILEFLAGS
+FILEOS                  VER_FILEOS
+FILETYPE                VER_FILETYPE
+FILESUBTYPE             VER_FILESUBTYPE
+
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+        VALUE "Comments",               VER_COMMENTS_STR
+        VALUE "CompanyName",            VER_COMPANYNAME_STR
+        VALUE "FileDescription",		VER_FILEDESCRIPTION_STR
+        VALUE "FileVersion",			VER_FILEVERSION_STR
+        VALUE "InternalName",			VER_INTERNALNAME_STR
+        VALUE "LegalCopyright",			VER_LEGALCOPYRIGHT_STR
+        VALUE "LegalTrademarks",		VER_LEGALTRADEMARKS_STR
+        VALUE "OriginalFilename",		VER_ORIGINALFILENAME_STR
+        VALUE "ProductName",			VER_PRODUCTNAME_STR
+        VALUE "ProductVersion",			VER_PRODUCTVERSION_STR
+        VALUE "System Name",			VER_SYSTEMNAME_STR
+        VALUE "Private Build",          VER_PRIVATEBLD_STR
+        VALUE "Special Build",          VER_SPECIALBLD_STR
+        VALUE "Testing String",         VER_TESTING_STR
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    //
+    // The following line should only be modified for localized versions.
+    // It consists of a WORD,WORD pair, where the pair
+    // describes a language, codepage combination supported by the file.
+    //
+    // For example, a file might have values "0x409,1252" indicating that it
+    // supports English language (0x409) in the Windows ANSI codepage (1252).
+    //
+    // For a list other acceptable  values refer to PROGRAMERS REFERENCE
+    // VOLUME 4 page 100, 102
+    //
+    VALUE "Translation", 0x409, 1252
+  END
+END
+
+// end of version structure section

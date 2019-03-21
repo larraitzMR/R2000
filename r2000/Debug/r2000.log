@@ -1,0 +1,8 @@
+﻿  r2000.cpp
+c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(52): warning C4101: 'handle': variable local sin referencia
+c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(50): warning C4101: 'status': variable local sin referencia
+c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(53): warning C4101: 'antenna': variable local sin referencia
+c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(51): warning C4101: 'pEnum': variable local sin referencia
+c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(55): warning C4101: 'antennaConfig': variable local sin referencia
+c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(54): warning C4101: 'antennaStatus': variable local sin referencia
+  r2000.vcxproj -> C:\Users\Propietario\source\repos\r2000\Debug\r2000.exe
