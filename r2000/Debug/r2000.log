@@ -1,8 +1,8 @@
-﻿  r2000.cpp
-c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(52): warning C4101: 'handle': variable local sin referencia
-c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(50): warning C4101: 'status': variable local sin referencia
-c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(53): warning C4101: 'antenna': variable local sin referencia
-c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(51): warning C4101: 'pEnum': variable local sin referencia
-c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(55): warning C4101: 'antennaConfig': variable local sin referencia
-c:\users\propietario\source\repos\r2000\r2000\r2000.cpp(54): warning C4101: 'antennaStatus': variable local sin referencia
-  r2000.vcxproj -> C:\Users\Propietario\source\repos\r2000\Debug\r2000.exe
+﻿  pch.cpp
+  network.cpp
+c:\users\propietario\documents\github\r2000\r2000\network.cpp(92): warning C4018: '<': no coinciden signed/unsigned
+c:\users\propietario\documents\github\r2000\r2000\network.cpp(140): warning C4018: '<': no coinciden signed/unsigned
+c:\users\propietario\documents\github\r2000\r2000\network.cpp(146): warning C4267: 'argumento': conversión de 'size_t' a 'short'; posible pérdida de datos
+  r2000.cpp
+  Generando código...
+  r2000.vcxproj -> C:\Users\Propietario\Documents\GitHub\R2000\Debug\r2000.exe

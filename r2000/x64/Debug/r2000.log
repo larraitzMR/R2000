@@ -1,0 +1,7 @@
+﻿r2000.obj : error LNK2019: símbolo externo __imp_RFID_Startup sin resolver al que se hace referencia en la función main
+r2000.obj : error LNK2019: símbolo externo __imp_RFID_RetrieveAttachedRadiosList sin resolver al que se hace referencia en la función main
+r2000.obj : error LNK2019: símbolo externo __imp_RFID_RadioOpen sin resolver al que se hace referencia en la función main
+r2000.obj : error LNK2019: símbolo externo __imp_RFID_AntennaPortGetStatus sin resolver al que se hace referencia en la función main
+r2000.obj : error LNK2019: símbolo externo __imp_RFID_AntennaPortGetConfiguration sin resolver al que se hace referencia en la función main
+..\lib\rfid.lib : warning LNK4272: el tipo de máquina de biblioteca 'x86' está en conflicto con el tipo de máquina de destino 'x64'
+C:\Users\Propietario\Documents\GitHub\R2000\Debug\r2000.exe : fatal error LNK1120: 5 externos sin resolver
