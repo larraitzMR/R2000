@@ -162,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="network.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="r2000.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="network.cpp" />
