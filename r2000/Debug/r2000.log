@@ -1,31 +1,9 @@
-﻿  network.cpp
-c:\users\propietario\documents\github\r2000\r2000\network.cpp(109): warning C4018: '<': no coinciden signed/unsigned
-c:\users\propietario\documents\github\r2000\r2000\network.cpp(149): warning C4129: '%': secuencia de escape de carácter no reconocida
-c:\users\propietario\documents\github\r2000\r2000\network.cpp(165): warning C4477: 'printf' : la cadena de formato '%s' requiere un argumento de tipo 'char *', pero el argumento variádico 1 tiene el tipo 'INT'
-  r2000.cpp
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(99): warning C4267: 'argumento': conversión de 'size_t' a 'char'; posible pérdida de datos
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(81): warning C4101: 'regiones': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(77): warning C4101: 'puertosConect': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(54): warning C4101: 'handle': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(52): warning C4101: 'status': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(67): warning C4101: 'dato': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(65): warning C4101: 'serverAddr': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(55): warning C4101: 'antenna': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(80): warning C4101: 'selecAntenna': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(79): warning C4101: 'antenaCheck': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(75): warning C4101: 'puertosC': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(71): warning C4101: 'power': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(64): warning C4101: 'server': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(73): warning C4101: 'reg': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(70): warning C4101: 'powerMinMax': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(53): warning C4101: 'pEnum': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(63): warning C4101: 'WSAData': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(57): warning C4101: 'antennaConfig': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(56): warning C4101: 'antennaStatus': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(78): warning C4101: 'puertosAnt': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(76): warning C4101: 'selAnt': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(74): warning C4101: 'puertos': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(65): warning C4101: 'clientAddr': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(64): warning C4101: 'client': variable local sin referencia
-  Generando código...
+﻿  r2000.cpp
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(30): warning C4101: 'handle': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(28): warning C4101: 'status': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(31): warning C4101: 'antenna': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(29): warning C4101: 'pEnum': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(39): warning C4101: 'WSAData': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(33): warning C4101: 'antennaConfig': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(32): warning C4101: 'antennaStatus': variable local sin referencia
   r2000.vcxproj -> C:\Users\Propietario\Documents\GitHub\R2000\Debug\r2000.exe

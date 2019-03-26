@@ -169,20 +169,49 @@ int read_udp_message(int sock_descriptor, char *message, char len) {
 } // READ_MESSAGE END
 
 
+/* Configure a local TCP listen socket in a given port.
+ * Return socket descriptor or -1 in case of error
+ */
+int configure_tcp_socket(int port) {
 
 
-char network_checksum(char *data, short len) {
-	char result = 0;
-	short i = 0;
+	printf("Listening for incoming connections...\n");
 
-	for (i = 0; i < len; i++) {
-		result += data[i];
+	WSAStartup(MAKEWORD(2, 0), &WSAData);
+	if ((ReceivingSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+		return -1;
+	}
+	else {
+		printf("Server: socket() is OK!\n");
 	}
 
-	//Two - complement
-	result = ~result;
-	result++;
+	memset(&ReceiverAddr, 0, sizeof(ReceiverAddr));
+	memset(&clientAddr, 0, sizeof(clientAddr));
 
-	return result;
-} // NETWORK_CHECKSUM END
+	ReceiverAddr.sin_addr.s_addr = INADDR_ANY;
+	ReceiverAddr.sin_family = AF_INET;
+	ReceiverAddr.sin_port = htons(port);
 
+
+	// Bind the socket with the server address 
+	if (bind(ReceivingSocket, (SOCKADDR *)&ReceiverAddr, sizeof(ReceiverAddr)) < 0)
+	{
+		perror("bind failed");
+		exit(EXIT_FAILURE);
+	}
+
+	// Some info on the receiver side...
+
+	getsockname(ReceivingSocket, (SOCKADDR *)&ReceiverAddr, (int *)sizeof(ReceiverAddr));
+
+	printf("Server: I'm listening and waiting connection on port %d\n", port);
+
+	//printf("Server: Receiving IP(s) used : %s\n", inet_pton(AF_INET, "192.168.1.52", &ReceiverAddr.sin_addr));
+	printf("Server: Receiving port used : %d\n", htons(ReceiverAddr.sin_port));
+	printf("Server: I\'m ready to receive a datagram...\n");
+
+	listen(ReceivingSocket, 0);
+	printf("Listening for incoming connections...\n");
+
+	return ReceivingSocket;
+} // CONFIGURE_TCP_SOCKET END
