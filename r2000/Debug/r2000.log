@@ -1,9 +1,10 @@
 ﻿  r2000.cpp
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(30): warning C4101: 'handle': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(28): warning C4101: 'status': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(31): warning C4101: 'antenna': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(29): warning C4101: 'pEnum': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(39): warning C4101: 'WSAData': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(33): warning C4101: 'antennaConfig': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(32): warning C4101: 'antennaStatus': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(158): warning C4102: 'CLOSE_RADIO': etiqueta sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(45): warning C4101: 'msg': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(32): warning C4101: 'antenna': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(41): warning C4101: 'client2': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(40): warning C4101: 'WSAData': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(34): warning C4101: 'antennaConfig': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(33): warning C4101: 'antennaStatus': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(50): warning C4101: 'retval': variable local sin referencia
   r2000.vcxproj -> C:\Users\Propietario\Documents\GitHub\R2000\Debug\r2000.exe

@@ -208,7 +208,7 @@ int configure_tcp_socket(int port) {
 
 	//printf("Server: Receiving IP(s) used : %s\n", inet_pton(AF_INET, "192.168.1.52", &ReceiverAddr.sin_addr));
 	printf("Server: Receiving port used : %d\n", htons(ReceiverAddr.sin_port));
-	printf("Server: I\'m ready to receive a datagram...\n");
+	//printf("Server: I\'m ready to receive a datagram...\n");
 
 	listen(ReceivingSocket, 0);
 	printf("Listening for incoming connections...\n");
