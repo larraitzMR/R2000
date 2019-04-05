@@ -1,10 +1,17 @@
 ﻿  r2000.cpp
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(158): warning C4102: 'CLOSE_RADIO': etiqueta sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(45): warning C4101: 'msg': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(32): warning C4101: 'antenna': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(41): warning C4101: 'client2': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(40): warning C4101: 'WSAData': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(34): warning C4101: 'antennaConfig': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(33): warning C4101: 'antennaStatus': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(50): warning C4101: 'retval': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(133): warning C4477: 'printf' : la cadena de formato '%u' requiere un argumento de tipo 'unsigned int', pero el argumento variádico 1 tiene el tipo 'INT64U'
+  c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(133): note: considere el uso de ' %llu' en la cadena de formato
+  c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(133): note: considere el uso de ' %I64u' en la cadena de formato
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(36): warning C4101: 'antenna': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(34): warning C4101: 'pstate': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(50): warning C4101: 'server': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(50): warning C4101: 'client2': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(49): warning C4101: 'WSAData': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(35): warning C4101: 'index': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(60): warning C4101: 'version': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(38): warning C4101: 'antennaConfig': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(37): warning C4101: 'antennaStatus': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(59): warning C4101: 'retval': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(53): warning C4101: 'buffer': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.cpp(50): warning C4101: 'client': variable local sin referencia
   r2000.vcxproj -> C:\Users\Propietario\Documents\GitHub\R2000\Debug\r2000.exe
