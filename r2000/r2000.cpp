@@ -6,16 +6,21 @@
  */
 
 
-#include "pch.h"
+
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <WinSock2.h>
 #include <iostream>
 #include "rfid_library.h"
+#include "byte_swap.h"
+#include "oemcfg.h"
 #include "network.h"
 #include "r2000.h"
 #include "reader_params.h"
+#include <ctime>
+
 
 
 #pragma comment(lib, "wsock32.lib")
@@ -23,23 +28,124 @@
 
 
 
+#define OEMCFG_USBD_32BIT_LEN           40
+#define OEMCFG_USBD_16BIT_LEN           OEMCFG_USBD_32BIT_LEN * 2
+#define OEMCFGADDR_PBA_NUM_32BIT_LEN    4
+
+
+typedef struct
+{
+	INT8U   byteLength;
+	INT8U   usbDescriptorType;
+	INT16U  name[OEMCFG_USBD_16BIT_LEN - 1];
+} USB_STRING_DESCRIPTOR;
+
+
+
+void ConvertUsbString(
+	char*           destination,
+	const INT16U*   source,
+	INT32U          length
+)
+{
+	/* Cheap way to do Unicode to ASCII - this assumes that the Unicode string*/
+	/* really just represents an ASCII string and we are simply removing the  */
+	/* upper nibble (which is 0x00).                                          */
+	while (length && (*source != 0))
+	{
+		length--;
+		*destination++ = (char)*source++;
+	}
+
+} /* ConvertUsbString */
+//
+//void OemConfigMacToHost(
+//	OEMCFG_AREA_MAP* pConfig
+//)
+//{
+//
+//	USB_STRING_DESCRIPTOR*   pManufacturerName;
+//	USB_STRING_DESCRIPTOR*   pProductName;
+//	USB_STRING_DESCRIPTOR*   pSerialNumber;
+//
+//	/* Convert the 32-bit integers up to the manufacturer name first and then */
+//	/* convert the 32-bit integers after the serial number through the end.   */
+//	Int32ArrayMacToHost(
+//		(INT32U *)pConfig,
+//		((INT32U *)&pConfig->mfg_name) - ((INT32U *)pConfig));
+//	Int32ArrayMacToHost(
+//		&pConfig->ant_avail,
+//		((INT32U *)(pConfig + 1)) - &pConfig->ant_avail);
+//
+//	/* Convert the USB Unicode strings to host format.                        */
+//	pManufacturerName = (USB_STRING_DESCRIPTOR*)pConfig->mfg_name;
+//	pProductName = (USB_STRING_DESCRIPTOR*)pConfig->prod_name;
+//	pSerialNumber = (USB_STRING_DESCRIPTOR*)pConfig->serial_num;
+//	Int16ArrayMacToHost(
+//		pManufacturerName->name,
+//		(pManufacturerName->byteLength - 2) / 2);
+//	Int16ArrayMacToHost(
+//		pProductName->name,
+//		(pProductName->byteLength - 2) / 2);
+//	Int16ArrayMacToHost(
+//		pSerialNumber->name,
+//		(pSerialNumber->byteLength - 2) / 2);
+//} /* OemConfigMacToHost */
+//
+//void Int32ArrayMacToHost(
+//	INT32U*         pBegin,
+//	INT32U          numberInt32
+//)
+//{
+//	for (; numberInt32; --numberInt32, ++pBegin)
+//	{
+//		*pBegin = MacToHost32(*pBegin);
+//	}
+//} /* Int32ArrayMacToHost */
+//
+//void Int16ArrayMacToHost(
+//	INT16U*         pBegin,
+//	INT32U          numberInt16
+//)
+//{
+//	for (; numberInt16; --numberInt16, ++pBegin)
+//	{
+//		*pBegin = MacToHost16(*pBegin);
+//	}
+//}
+
 int main(
 	int     argc,
 	char**  argv
 )
 {
+
 	RFID_STATUS                 status;
 	RFID_RADIO_ENUM*            pEnum;
 	RFID_RADIO_HANDLE           handle;
 	RFID_RADIO_POWER_STATE		pstate;
-	INT32U                      index;
+	RFID_RADIO_INFO*			pInfo;
+	INT32U                      index; 
 	INT32U                      antenna;
+	RFID_VERSION				version;
 	RFID_ANTENNA_PORT_STATUS    antennaStatus;
 	RFID_ANTENNA_PORT_CONFIG    antennaConfig;
+	INT32						antennaPort;
+	RFID_18K6C_TAG_GROUP		pGroup;
 
 	RFID_RADIO_OPERATION_MODE	pmode;
 	RFID_RADIO_LINK_PROFILE		linkProfile;
 	
+	RFID_MAC_REGION*			pRegion;
+	void*						pRegionConfig;
+
+	OEMCFG_AREA_MAP          oemConfig;
+	char                     tempString[OEMCFG_USBD_32BIT_LEN * 4];
+	INT32U                   numToRead = ((INT32U)&oemConfig.hw_options4 - (INT32U)&oemConfig) / sizeof(INT32U);
+	char*                    regionString;
+	USB_STRING_DESCRIPTOR*   pManufacturerName;
+	USB_STRING_DESCRIPTOR*   pProductName;
+	USB_STRING_DESCRIPTOR*   pSerialNumber;
 
 
 	RFID_UNREFERENCED_LOCAL(argc);
@@ -57,14 +163,14 @@ int main(
 	int clientAddrSize = sizeof(clientAddr);
 	int clientAddrSize2 = sizeof(clientAddr2);
 	int retval;
-	char version[15];
+	//char version[15];
 
 	double power = 0.0;
 
 
 
 	/* Initialialize the RFID library                                         */
-	status = RFID_Startup(NULL, 0);
+	status = RFID_Startup(&version, 0);
 	if (RFID_STATUS_OK != status)
 	{
 		fprintf(stderr, "ERROR: RFID_Startup returned 0x%.8x\n", status);
@@ -79,7 +185,7 @@ int main(
 		fprintf(stderr, "ERROR: Failed to allocate memory\n");
 		RFID_Shutdown();
 	}
-	pEnum->length =
+	pEnum->length = sizeof(RFID_RADIO_ENUM);
 		pEnum->totalLength = sizeof(RFID_RADIO_ENUM);
 
 	/* Enumerate the radios                                                   */
@@ -104,6 +210,12 @@ int main(
 		free(pEnum);
 	}
 
+	/* Now do something with radio list */ 
+	for (INT32U index = 0; index < pEnum->countRadios; ++index) {
+		pInfo = pEnum->ppRadioInfo[index];
+		INT8U* a = pInfo->pUniqueId;
+	/* Do something useful with the radio */ }
+
 	/* Open up the first radio - if more than one radio is attached, so be it */
 	if (!pEnum->countRadios)
 	{
@@ -118,12 +230,23 @@ int main(
 	}
 
 
+	pRegion = (RFID_MAC_REGION *)malloc(sizeof(RFID_MAC_REGION));
+	pRegionConfig = NULL;
+	status = RFID_MacGetRegion(handle, pRegion, pRegionConfig);
 
-	 
 
-	status = RFID_RadioGetOperationMode(handle, &pmode);
+	/* HABILITAR ANTENAS*/
+	/*
+	antennaPort = 1;
+	status = RFID_AntennaPortGetStatus(handle, antennaPort, &antennaStatus);
+	//antennaStatus.state = RFID_ANTENNA_PORT_STATE_ENABLED;
+	status = RFID_AntennaPortSetState(handle, antennaPort, RFID_ANTENNA_PORT_STATE_ENABLED);*/
+
+
+	/*
+ 	status = RFID_RadioGetOperationMode(handle, &pmode);
 	//printf("\tRadioHandle used: %u", handle);
-	printf("PowerStat found: %u\n ", pmode);
+	printf("PowerStat found: %u\n ", pmode); */
 
 	UINT32 currentLinkProfile = 0;
 
@@ -141,7 +264,8 @@ int main(
 
 
 
-	///* COMUNICACIÓN SOCKET CON EL SOFTWARE MYRUNS */
+
+	/* COMUNICACIÓN SOCKET CON EL SOFTWARE MYRUNS */
 	//server = configure_tcp_socket(5557);
 
 	//if ((client = accept(server, (struct sockaddr*)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
@@ -185,12 +309,29 @@ int main(
 				setAntennaPower(handle, 1, 100);
 			} 
 			else if (strcmp(msg, "GET_INFO") == 0) {
-				char info[22];
+				char info[15];
 
-				getReaderInfo(handle, info);
+				sprintf(info, "%d.%d.%d.%d", version.major, version.minor, version.maintenance, version.release);
 				printf("Version: %s\n", info);
 
 			}
+			else if (strcmp(msg, "GET_ADV_OPT") == 0) {
+				status = RFID_18K6CGetQueryTagGroup(handle, &pGroup);
+
+				RFID_18K6C_INVENTORY_SESSION session = pGroup.session;
+				RFID_18K6C_INVENTORY_SESSION_TARGET target = pGroup.target;
+
+			}
+			else if (strcmp(msg, "CON_ANT_PORTS") == 0) {
+				//mandar el numero de antena y guardarlo en antenna Port
+				int numAntenas = 0;
+				for (int antPort = 0; antPort < numAntenas; antPort++)
+				{
+					status = RFID_AntennaPortGetStatus(handle, antPort, &antennaStatus);
+					status = RFID_AntennaPortSetState(handle, antPort, RFID_ANTENNA_PORT_STATE_ENABLED);
+				}
+			}
+			
 			memset(msg, 0, sizeof(msg));
 	//	}
 
@@ -200,3 +341,4 @@ int main(
 	//}
 
 } /* main */
+

@@ -1,4 +1,6 @@
-#include "pch.h"
+
+
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,6 +9,7 @@
 #include "rfid_library.h"
 #include "network.h"
 #include "r2000.h"
+
 
 
 RFID_STATUS                 status;
