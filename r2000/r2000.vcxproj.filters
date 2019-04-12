@@ -26,13 +26,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="r2000.cpp">
+    <ClCompile Include="reader_params.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="network.cpp">
+    <ClCompile Include="r2000.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="reader_params.cpp">
+    <ClCompile Include="network.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

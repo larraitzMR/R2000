@@ -164,9 +164,9 @@
     <ClInclude Include="reader_params.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="network.cpp" />
-    <ClCompile Include="r2000.cpp" />
-    <ClCompile Include="reader_params.cpp" />
+    <ClCompile Include="network.c" />
+    <ClCompile Include="r2000.c" />
+    <ClCompile Include="reader_params.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,4 +1,3 @@
-#pragma once
 
 #ifndef NETWORK_H_
 
