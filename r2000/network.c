@@ -8,9 +8,6 @@
 #include <windows.h>
 #include <ws2tcpip.h>
 
-//#include <iostream>
-
-
 
 #pragma comment(lib, "wsock32.lib")
 #pragma comment(lib, "Ws2_32.lib")

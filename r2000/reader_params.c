@@ -8,9 +8,6 @@
 #include "network.h"
 #include "r2000.h"
 
-//#include <iostream>
-
-
 
 RFID_STATUS                 status;
 //RFID_RADIO_ENUM*            pEnum;
