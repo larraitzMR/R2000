@@ -153,8 +153,8 @@ int main(
 	SOCKET server, client, client2;
 	//SOCKADDR_IN  clientAddr;
 	struct sockaddr_in clientAddr, clientAddr2;
-	char buffer[15];
-	char msg[15];
+	char buffer[10];
+	char msg[20];
 	int conectado = 0;
 	int preparado = 0;
 	int clientAddrSize = sizeof(clientAddr);
@@ -163,6 +163,7 @@ int main(
 	//char version[15];
 
 	double power = 0.0;
+	char* nuevo[20];
 
 
 
@@ -266,46 +267,23 @@ int main(
 	/* Read the OEM configuration area and then convert it to the host-native */
 	/* format.  Note, if we were going to write this back to the MAC, then    */
 	/* we would have to convert it to MAC-native format before writing it.    */
-	status =
-		RFID_MacReadOemData(
-			handle,
-			0,
-			&numToRead,
-			(INT32U *)&oemConfig);
+	status = RFID_MacReadOemData( handle, 0,	&numToRead, (INT32U *)&oemConfig);
 	if (RFID_STATUS_OK != status)
 	{
 		fprintf(stderr, "ERROR: RFID_MacReadOemData returned 0x%.8x\n", status);
 	}
 	OemConfigMacToHost(&oemConfig);
 	pManufacturerName = (USB_STRING_DESCRIPTOR*)oemConfig.mfg_name;
-	ConvertUsbString(
-		tempString,
-		pManufacturerName->name,
-		(pManufacturerName->byteLength - 2) / sizeof(INT16U));
-	printf(
-		"Manufacturer:\t\t\t%.*s\n",
-		(pManufacturerName->byteLength - 2) / sizeof(INT16U),
-		tempString);
+	ConvertUsbString( tempString, pManufacturerName->name, (pManufacturerName->byteLength - 2) / sizeof(INT16U));
+	printf(	"Manufacturer:\t\t\t%.*s\n", (pManufacturerName->byteLength - 2) / sizeof(INT16U), tempString);
 
 	pProductName = (USB_STRING_DESCRIPTOR*)oemConfig.prod_name;
-	ConvertUsbString(
-		tempString,
-		pProductName->name,
-		(pProductName->byteLength - 2) / sizeof(INT16U));
-	printf(
-		"Product Name:\t\t\t%.*s\n",
-		(pProductName->byteLength - 2) / sizeof(INT16U),
-		tempString);
+	ConvertUsbString(tempString, pProductName->name, (pProductName->byteLength - 2) / sizeof(INT16U));
+	printf("Product Name:\t\t\t%.*s\n", (pProductName->byteLength - 2) / sizeof(INT16U), tempString);
 
 	pSerialNumber = (USB_STRING_DESCRIPTOR*)oemConfig.serial_num;
-	ConvertUsbString(
-		tempString,
-		pSerialNumber->name,
-		(pSerialNumber->byteLength - 2) / sizeof(INT16U));
-	printf(
-		"Serial Number:\t\t\t%.*s\n",
-		(pSerialNumber->byteLength - 2) / sizeof(INT16U),
-		tempString);
+	ConvertUsbString(tempString, pSerialNumber->name, (pSerialNumber->byteLength - 2) / sizeof(INT16U));
+	printf("Serial Number:\t\t\t%.*s\n", (pSerialNumber->byteLength - 2) / sizeof(INT16U), tempString);
 	printf("RSSI Threshod:\t\t\t%d dBm\n", oemConfig.rssi_threshold);
 	if (0 == oemConfig.regulatory_region)
 	{
@@ -330,42 +308,59 @@ int main(
 
 
 	/* COMUNICACIÓN SOCKET CON EL SOFTWARE MYRUNS */
-	//server = configure_tcp_socket(5557);
+	server = configure_tcp_socket(5557);
 
-	//if ((client = accept(server, (struct sockaddr*)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
-	//{
-	//	printf("Client connected!\n");
-	//	recvfrom(client, buffer, sizeof(buffer), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);
-	//	printf("Client says: %s\n", buffer);
-	//	if (strncmp(buffer, "CONNECT", 7) == 0)
-	//	{
-	//		conectado = 1;
-	//		printf("CONECTADO AL READER\n");
-	//		memset(buffer, 0, sizeof(buffer));
-	//		send(client, "READY", 5, 0);
-	//	}
-	//}
-	//server = configure_tcp_socket(5558);
-	//if ((client = accept(server, (struct sockaddr*)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
-	//{
-	//	printf("Client connected!\n");
-	//	preparado = 1;
-	//}
-	//if (conectado == 1 && preparado == 1)
-	//{
-	//	while (conectado == 1) {
-	//		retval = recvfrom(client, msg, sizeof(msg), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);
-	//		printf("%s\n", msg);
+	if ((client = accept(server, (struct sockaddr*)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
+	{
+		printf("Client connected!\n");
+		//recvfrom(client, buffer, sizeof(buffer), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);
+		retval = recv(client, buffer, sizeof(buffer), 0);
+		printf("Client says: %s\n", buffer);
+		if (strncmp(buffer, "CONNECT", 7) == 0)
+		{
+			conectado = 1;
+			printf("CONECTADO AL READER\n");
+			memset(buffer, 0, sizeof(buffer));
+			send(client, "READY", 5, 0);
+		}
+		memset(buffer, 0, sizeof(buffer));
+	}
+	server = configure_tcp_socket(5558);
+	if ((client = accept(server, (struct sockaddr*)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
+	{
+		printf("Client connected!\n");
+		preparado = 1;
+	}
+	if (conectado == 1 && preparado == 1)
+	{
+		while (conectado == 1) {
+			/*retval = recvfrom(client, msg, sizeof(msg), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);*/
+			retval = recv(client, msg, sizeof(msg), 0);
+			//nuevo[0] = '\0';
+			//if (strstr(msg, "#") == NULL) {
+			//	
+			//	strcat(nuevo, msg);
+			//	//strcat(append, str2);
+			//	printf("append: %s\n", nuevo);
+			//}
+			//else {
+			//	strcat(nuevo, msg);
+			//	nuevo[strlen(nuevo) - 1] = 0;
+			//	printf("msg: %s\n", nuevo);
+			//}
+			//printf("recv()'d %d bytes of data in buf\n", retval);
+			//printf("msg: %s\n", msg);
 			if (strncmp(msg, "DISCONNECT", 10) == 0) {
 				conectado = 0;
 			}
 			if (strncmp(msg, "POWER_MINMAX", 12) == 0)
-			{
+			{ 
 				printf("%s\n", msg);
-			} else if (strcmp(msg, "GET_POWER") == 0) {
+			} else if (strncmp(msg, "GET_POWER", 9) == 0) {
 				power = getAntennaPower(handle);
-				//printf("%s\n", msg);
-			}
+				printf("DENTRO DE POWER\n");
+				//send(client, "READY", 5, 0);
+			} 
 			else if (strcmp(msg, "SET_POWER") == 0) {
 				setAntennaPower(handle, 1, 100);
 			} 
@@ -375,6 +370,17 @@ int main(
 				sprintf(info, "%d.%d.%d.%d", version.major, version.minor, version.maintenance, version.release);
 				printf("Version: %s\n", info);
 
+				memset(&oemConfig, 0, sizeof(oemConfig));
+				status = RFID_MacReadOemData(handle, 0, &numToRead, (INT32U *)&oemConfig);
+				if (RFID_STATUS_OK != status)
+				{
+					fprintf(stderr, "ERROR: RFID_MacReadOemData returned 0x%.8x\n", status);
+				}
+				OemConfigMacToHost(&oemConfig);
+				pManufacturerName = (USB_STRING_DESCRIPTOR*)oemConfig.mfg_name;
+				ConvertUsbString(tempString, pManufacturerName->name, (pManufacturerName->byteLength - 2) / sizeof(INT16U));
+				printf("Manufacturer:\t\t\t%.*s\n", (pManufacturerName->byteLength - 2) / sizeof(INT16U), tempString);
+
 			}
 			else if (strcmp(msg, "GET_ADV_OPT") == 0) {
 				status = RFID_18K6CGetQueryTagGroup(handle, &pGroup);
@@ -383,7 +389,7 @@ int main(
 				RFID_18K6C_INVENTORY_SESSION_TARGET target = pGroup.target;
 
 			}
-			else if (strcmp(msg, "CON_ANT_PORTS") == 0) {
+			else if (strcmp(msg, "CON_ANT_PORTS") == 0) { 
 				//mandar el numero de antena y guardarlo en antenna Port
 				int numAntenas = 0;
 				for (int antPort = 0; antPort < numAntenas; antPort++)
@@ -394,12 +400,13 @@ int main(
 			}
 			
 			memset(msg, 0, sizeof(msg));
-	//	}
+		}
 
-	//	closesocket(client);
-	//	//closesocket(client2);
-	//	printf("Client disconnected!\n");
-	//}
+		closesocket(client);
+		//closesocket(client2);
+		printf("Client disconnected!\n");
+		WSACleanup();
+	}
 
 } /* main */
 

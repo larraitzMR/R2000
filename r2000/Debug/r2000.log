@@ -1,15 +1,12 @@
 ﻿  r2000.c
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(129): warning C4101: 'antenna': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(137): warning C4101: 'linkProfile': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(126): warning C4101: 'pstate': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(156): warning C4101: 'server': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(156): warning C4101: 'client2': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(136): warning C4101: 'pmode': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(133): warning C4101: 'antennaPort': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(155): warning C4101: 'WSAData': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(128): warning C4101: 'index': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(132): warning C4101: 'antennaConfig': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(165): warning C4101: 'retval': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(159): warning C4101: 'buffer': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(156): warning C4101: 'client': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(126): warning C4101: 'antenna': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(134): warning C4101: 'linkProfile': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(123): warning C4101: 'pstate': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(153): warning C4101: 'client2': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(133): warning C4101: 'pmode': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(130): warning C4101: 'antennaPort': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(166): warning C4101: 'nuevo': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(152): warning C4101: 'WSAData': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(125): warning C4101: 'index': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(129): warning C4101: 'antennaConfig': variable local sin referencia
   r2000.vcxproj -> C:\Users\Propietario\Documents\GitHub\R2000\Debug\r2000.exe
