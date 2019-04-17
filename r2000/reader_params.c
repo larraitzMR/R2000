@@ -85,14 +85,15 @@ int getAntennaPower(RFID_RADIO_HANDLE handle) {
 		{
 			break;
 		}
-		printf("Antenna #%d:\n", antenna);
-		printf("\tState: %s\n",
-			(antennaStatus.state == RFID_ANTENNA_PORT_STATE_DISABLED ?
-				"disabled" : "enabled"));
+		
+		//printf("\tState: %s\n",(antennaStatus.state == RFID_ANTENNA_PORT_STATE_DISABLED ? "disabled" : "enabled"));
 
 		if (RFID_ANTENNA_PORT_STATE_DISABLED == antennaStatus.state)
 		{
 			continue;
+		}
+		else {
+			printf("Antenna #%d:\n", antenna);
 		}
 
 		antennaConfig.length = sizeof(RFID_ANTENNA_PORT_CONFIG);
@@ -107,44 +108,45 @@ int getAntennaPower(RFID_RADIO_HANDLE handle) {
 		power = (double)antennaConfig.powerLevel / 10;
 		printf("\tPower Level: %.1f dBm\n", power);
 	}
-
-	return power;
+	return power*10;
 }
 
- int setAntennaPower(RFID_RADIO_HANDLE handle, INT32U antenna, double power) {
+ int setAntennaPower(RFID_RADIO_HANDLE handle, double power) {
 
 	 printf("SET ANTENNA POWER\n");
 
-	/* Get the state of each antenna.  For enabled antennas, get the configuration for that antenna.  */
+	 /* Get the state of each antenna.  For enabled antennas, get the configuration for that antenna.  */
+	 //for (antenna = 0; RFID_STATUS_OK == status; ++antenna)
+	 //{
+		 antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
+		 status = RFID_AntennaPortGetStatus(handle, antenna, &antennaStatus);
+		 if (RFID_STATUS_OK != status)
+		 {
+			 exit(1);
+		 }
+		// printf("\tState: %s\n", (antennaStatus.state == RFID_ANTENNA_PORT_STATE_DISABLED ?  "disabled" : "enabled"));
+/*		 if (RFID_ANTENNA_PORT_STATE_DISABLED == antennaStatus.state)
+		 {
+			 continue;
+		 }
+		 else {
+			 printf("Antenna #%d:\n", antenna);
 
-		antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
-		status = RFID_AntennaPortGetStatus(handle, antenna, &antennaStatus);
-		if (RFID_STATUS_OK != status)
-		{
-			exit(1);
-		}
-		printf("Antenna #%d:\n", antenna);
-		printf("\tState: %s\n",
-			(antennaStatus.state == RFID_ANTENNA_PORT_STATE_DISABLED ?
-				"disabled" : "enabled"));
-
-		printf("\tLast Antenna Sense Value: %u ohms\n",
-			antennaStatus.antennaSenseValue);
-
-		antennaConfig.length = sizeof(RFID_ANTENNA_PORT_CONFIG);
-		status = RFID_AntennaPortGetConfiguration(handle, antenna, &antennaConfig);
-		if (RFID_STATUS_OK != status)
-		{
-			fprintf(stderr,
-				"ERROR: RFID_AntennaPortGetConfiguration returned 0x%.8x\n",
-				status);
-			exit(1);
-		}
- 		//power = (int)antennaConfig.powerLevel * 10;
-		//printf("\tPower Level: %.1f dBm\n", power);
-
-		antennaConfig.powerLevel = power;
-		status = RFID_AntennaPortSetConfiguration(handle, 0, &antennaConfig);
+		 }			*/ 
+		 antennaConfig.length = sizeof(RFID_ANTENNA_PORT_CONFIG);
+		 status = RFID_AntennaPortGetConfiguration(handle, antenna, &antennaConfig);
+		 if (RFID_STATUS_OK != status)
+		 {
+			 fprintf(stderr,
+				 "ERROR: RFID_AntennaPortGetConfiguration returned 0x%.8x\n",
+				 status);
+			 exit(1);
+		 }
+		 printf("\tPower Level: %.1f dBm\n", power);
+		 antennaConfig.powerLevel = (power / 10);
+		 printf("\tPower Level: %.1f dBm\n", power);
+		 status = RFID_AntennaPortSetConfiguration(handle, 0, &antennaConfig);
+	 //}
 }
 
  void getReaderInfo(RFID_RADIO_HANDLE handle, char *inf) {

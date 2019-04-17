@@ -336,19 +336,7 @@ int main(
 		while (conectado == 1) {
 			/*retval = recvfrom(client, msg, sizeof(msg), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);*/
 			retval = recv(client, msg, sizeof(msg), 0);
-			//nuevo[0] = '\0';
-			//if (strstr(msg, "#") == NULL) {
-			//	
-			//	strcat(nuevo, msg);
-			//	//strcat(append, str2);
-			//	printf("append: %s\n", nuevo);
-			//}
-			//else {
-			//	strcat(nuevo, msg);
-			//	nuevo[strlen(nuevo) - 1] = 0;
-			//	printf("msg: %s\n", nuevo);
-			//}
-			//printf("recv()'d %d bytes of data in buf\n", retval);
+			
 			//printf("msg: %s\n", msg);
 			if (strncmp(msg, "DISCONNECT", 10) == 0) {
 				conectado = 0;
@@ -357,24 +345,38 @@ int main(
 			{ 
 				printf("%s\n", msg);
 			} else if (strncmp(msg, "GET_POWER", 9) == 0) {
+				char pow[4] = ""; 
 				power = getAntennaPower(handle);
-				printf("DENTRO DE POWER\n");
-				//send(client, "READY", 5, 0);
+				printf("POWER: %.1f\n", power);
+				//itoa(power, pow, 10);
+				sprintf(pow, "%.1f", power/10);
+				//string str = string(intStr);
+				printf("%s\n", pow);
+				send(client, pow, 5, 0);
 			} 
-			else if (strcmp(msg, "SET_POWER") == 0) {
-				setAntennaPower(handle, 1, 100);
+			else if (strncmp(msg, "SET_POWER", 9) == 0) {
+				printf("%s\n", msg);
+				int longitud = strlen(msg) - 9;
+				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+				nuevo[longitud] = '\0';
+				strncpy(nuevo, msg + 9, longitud);
+				//printf("Set_Power: %s\n", nuevo);
+				//fflush(stdout);
+				/*double value = (double)atoi(nuevo)/100;*/
+				int value = atoi(nuevo);
+				setAntennaPower(handle, value);
 			} 
 			else if (strcmp(msg, "GET_INFO") == 0) {
 				char info[15];
 
 				sprintf(info, "%d.%d.%d.%d", version.major, version.minor, version.maintenance, version.release);
 				printf("Version: %s\n", info);
-
+				 
 				memset(&oemConfig, 0, sizeof(oemConfig));
 				status = RFID_MacReadOemData(handle, 0, &numToRead, (INT32U *)&oemConfig);
 				if (RFID_STATUS_OK != status)
 				{
-					fprintf(stderr, "ERROR: RFID_MacReadOemData returned 0x%.8x\n", status);
+					fprintf(stderr, "ERROR: RFID_MacReadOemData returned 0x%.8x\n", status); 
 				}
 				OemConfigMacToHost(&oemConfig);
 				pManufacturerName = (USB_STRING_DESCRIPTOR*)oemConfig.mfg_name;
