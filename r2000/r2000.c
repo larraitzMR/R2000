@@ -352,7 +352,7 @@ int main(
 				sprintf(pow, "%.1f", power/10);
 				//string str = string(intStr);
 				printf("%s\n", pow);
-				send(client, pow, 5, 0);
+				send(client, pow, sizeof(pow), 0);
 			} 
 			else if (strncmp(msg, "SET_POWER", 9) == 0) {
 				printf("%s\n", msg);
@@ -391,17 +391,56 @@ int main(
 				RFID_18K6C_INVENTORY_SESSION_TARGET target = pGroup.target;
 
 			}
-			else if (strcmp(msg, "CON_ANT_PORTS") == 0) { 
-				//mandar el numero de antena y guardarlo en antenna Port
-				int numAntenas = 0;
-				for (int antPort = 0; antPort < numAntenas; antPort++)
-				{
-					status = RFID_AntennaPortGetStatus(handle, antPort, &antennaStatus);
-					status = RFID_AntennaPortSetState(handle, antPort, RFID_ANTENNA_PORT_STATE_ENABLED);
-				}
+			else if (strcmp(msg, "ANT_PORTS") == 0) {
+				printf("msg: %s\n", msg);
 			}
-			
-			memset(msg, 0, sizeof(msg));
+			else if (strncmp(msg, "CON_ANT_PORTS", 13) == 0) { 
+				//que antenas estan enabled
+				printf("msg: %s\n", msg);
+				char selAnt[4];
+				getConnectedAntennaPorts(handle, selAnt);
+				//for (int i = 0; i < sizeof(selAnt); i++) {
+				//	printf("%d", selAnt[i]);
+				//}
+				//int selecAntenna[4];
+				//selecAntenna[0] = selAnt[0];
+				//selecAntenna[1] = selAnt[1];
+				//selecAntenna[2] = selAnt[2];
+				//selecAntenna[3] = selAnt[3];
+
+				send(client, selAnt, 4, 0);
+			}
+			else if (strncmp(msg, "GET_SEL_ANT", 11) == 0) {
+				printf("msg: %s\n", msg);
+				int *selAnt[4];
+				getConnectedAntennaPorts(handle, selAnt);
+				//printf("%s", selAnt);
+				send(client, selAnt, 4, 0);
+			}
+			else if (strncmp(msg, "SET_SEL_ANT", 11) == 0) {
+				printf("msg: %s\n", msg);
+				char *nuevoDato;
+				int longitud = strlen(msg) - 11;
+				nuevoDato = (char*)malloc(sizeof(char) * (longitud + 1));
+				nuevoDato[longitud] = '\0';
+				strncpy(nuevoDato, msg + 11, longitud);
+				printf("nuevo dato: %s\n", nuevoDato);
+				INT32U value = atoi(nuevoDato);
+
+				//setEnabledAntena(handle, nuevoDato);
+				antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
+				status = RFID_AntennaPortGetStatus(handle, value, &antennaStatus);
+				if (RFID_ANTENNA_PORT_STATE_DISABLED == antennaStatus.state) {
+					printf("ENABLED\n");
+					status = RFID_AntennaPortSetState(handle, value, RFID_ANTENNA_PORT_STATE_ENABLED);
+				}
+				else {
+					printf("DISABLED\n");
+					status = RFID_AntennaPortSetState(handle, value, RFID_ANTENNA_PORT_STATE_DISABLED);
+				}
+				status = RFID_AntennaPortSetConfiguration(handle, value, &antennaConfig);
+			}
+ 			memset(msg, 0, sizeof(msg));
 		}
 
 		closesocket(client);
