@@ -152,13 +152,8 @@ void getReaderInfo(RFID_RADIO_HANDLE handle, char *inf) {
 
 }
 
-void getConnectedAntennaPorts(RFID_RADIO_HANDLE handle, char *ant ) {
+void getConnectedAntennaPorts(RFID_RADIO_HANDLE handle, char ant[4]) {
 
-	int conectadas[4];
-	ant =  malloc(4);
-
-	/* Get the state of each antenna.  For enabled antennas, get the configuration for that antenna.  */
-   // for (int i = 0; i < 4; i++)
 	for (antenna = 1; antenna < 5; ++antenna)
 	{
 		antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
@@ -170,40 +165,18 @@ void getConnectedAntennaPorts(RFID_RADIO_HANDLE handle, char *ant ) {
 
 		if (RFID_ANTENNA_PORT_STATE_DISABLED == antennaStatus.state)
 		{
+			ant[antenna-1] = 0;
 			continue;
 		}
 		else {
 			printf("Antenna #%d\n", antenna);
-			//p[antenna] = antenna;
-			ant[antenna] = antenna;
-			//printf("#%d\n", p[antenna]);
-			printf("#%d\n", ant[antenna]);
-
-			//char *str2 = malloc(4 + 1 + 1); /* one for extra char, one for trailing zero */
-			//
-			//sprintf(ant, "%d", antenna);
-			//printf("ante %s\n", ant);
-			////strcpy(str2, str);
-			//str2[len] = ant;
-			//str2[len + 1] = '\0';
-
-			//printf("CHAR %s\n", str2); /* prints "blablablaH" */
-
+			ant[antenna-1] = antenna;
+			printf("#%d\n", ant[antenna-1]);
 		}
-
-		//printf("CHAR %s", ant);
-		//antennaConfig.length = sizeof(RFID_ANTENNA_PORT_CONFIG);
-		//status = RFID_AntennaPortGetConfiguration(handle, antenna, &antennaConfig);
-
 	}
 }
 
-void getEnabledAntena(RFID_RADIO_HANDLE handle, int *p) {
-
-	int conectadas[4];
-	char *str[4];
-	/* Get the state of each antenna.  For enabled antennas, get the configuration for that antenna.  */
-   // for (int i = 0; i < 4; i++)
+void getEnabledAntena(RFID_RADIO_HANDLE handle, char ant[4]) {
 	for (antenna = 1; antenna < 5; ++antenna)
 	{
 		antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
@@ -215,54 +188,72 @@ void getEnabledAntena(RFID_RADIO_HANDLE handle, int *p) {
 
 		if (RFID_ANTENNA_PORT_STATE_DISABLED == antennaStatus.state)
 		{
+			ant[antenna-1] = 0;
 			continue;
 		}
 		else {
 			printf("Antenna #%d\n", antenna);
-			p[antenna] = antenna;
-			printf(" #%d\n", p[antenna]);
-
-			size_t len = strlen(str);
-			char *str2 = malloc(len + 1 + 1); /* one for extra char, one for trailing zero */
-			strcpy(str2, str);
-			str2[len] = antenna;
-			str2[len + 1] = '\0';
-
-			printf("CHAR %s\n", str2); /* prints "blablablaH" */
+			ant[antenna-1] = antenna;
+			printf("#%d\n", ant[antenna-1]);
 		}
-
 	}
 }
 
-void setEnabledAntena(RFID_RADIO_HANDLE handle, char *inf) {
-
+void setSelectedAntena(RFID_RADIO_HANDLE handle, char *nuevoDato) {
+	//INT32U value = atoi(nuevoDato);
 	int conectadas[4];
-	/* Get the state of each antenna.  For enabled antennas, get the configuration for that antenna.  */
-   // for (int i = 0; i < 4; i++)
-	for (antenna = 0; antenna < 4; ++antenna)
-	{
-		antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
-		status = RFID_AntennaPortGetStatus(handle, antenna, &antennaStatus);
-		if (RFID_STATUS_OK != status)
-		{
-			break;
-		}
+	int numElementos = 0;
 
-		if (RFID_ANTENNA_PORT_STATE_DISABLED == antennaStatus.state)
-		{
-			continue;
-		}
+	char* p;
+	int j = 0;
+	for (p = strtok(nuevoDato + 1, " "); p; p = strtok(NULL, " ")) {
+
+		INT32U value = atoi(p);
+		printf("NUMERO: %d\n", value);
+		if (value == 0) {}
 		else {
-			printf("Antenna #%d:\n", antenna);
-			conectadas[antenna] = antenna;
-			printf("Antenna #%d:\n", conectadas[antenna]);
-
-			antennaConfig.length = sizeof(RFID_ANTENNA_PORT_CONFIG);
-			status = RFID_AntennaPortGetConfiguration(handle, antenna, &antennaConfig);
-			status = RFID_AntennaPortSetState(handle, antenna, RFID_ANTENNA_PORT_STATE_ENABLED);
-			status = RFID_AntennaPortSetConfiguration(handle, antenna, &antennaConfig);
-
+			conectadas[j] = value;
+			printf("Conectadas: %d\n", conectadas[j]);
+			j++;
+			numElementos++;
 		}
-
 	}
+	if (numElementos == 0)
+	{
+		for (int i = 1; i < 5; i++)
+		{
+			antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
+			status = RFID_AntennaPortGetStatus(handle, i, &antennaStatus);
+			status = RFID_AntennaPortSetState(handle, i, RFID_ANTENNA_PORT_STATE_DISABLED);
+			status = RFID_AntennaPortSetConfiguration(handle, i, &antennaConfig);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			for (int j = 0; j < numElementos; j++)
+			{
+				printf("i: %d j: %d, conectadas[j]: %d\n", i, j, conectadas[j]);
+				if (conectadas[j] == i) {
+					//setEnabledAntena(handle, nuevoDato);
+					antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
+					status = RFID_AntennaPortGetStatus(handle, i, &antennaStatus);
+					if (RFID_ANTENNA_PORT_STATE_DISABLED == antennaStatus.state) {
+						printf("ENABLED\n");
+						status = RFID_AntennaPortSetState(handle, i, RFID_ANTENNA_PORT_STATE_ENABLED);
+						status = RFID_AntennaPortSetConfiguration(handle, i, &antennaConfig);
+					}
+					break;
+				}
+				else {
+					printf("DISABLED\n");
+					status = RFID_AntennaPortSetState(handle, i, RFID_ANTENNA_PORT_STATE_DISABLED);
+					status = RFID_AntennaPortSetConfiguration(handle, i, &antennaConfig);
+				}
+			}
+		}
+	}
+
+	memset(conectadas, 0, sizeof(conectadas));
 }
