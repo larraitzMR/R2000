@@ -194,8 +194,9 @@ int getAntennaPower(RFID_RADIO_HANDLE handle) {
 				status);
 			exit(1);
 		}
-		power = (double)antennaConfig.powerLevel / 10;
-		//printf("\tPower Level: %.1f dBm\n", power);
+		//power = antennaConfig.powerLevel / 10.0f;
+		power = antennaConfig.powerLevel;
+		printf("\tPower Level: %.1f dBm\n", power);
 	}
 	return power;
 }
@@ -224,10 +225,10 @@ int setAntennaPower(RFID_RADIO_HANDLE handle, double power) {
 		printf("Antenna #%d:\n", antenna);
 		printf("\tPower Level: %.1f dBm\n", power);
 		int pow = power * 10;
-		printf("\tPow: %d dBm\n", pow);
+		//printf("\tPow: %d dBm\n", pow);
 		antennaConfig.powerLevel = pow;
 		status = RFID_AntennaPortSetConfiguration(handle, antenna, &antennaConfig);
-		printf("\tPower Level: %.1f dBm\n", antennaConfig.powerLevel);
+		//printf("\tPower Level: %.1f dBm\n", antennaConfig.powerLevel);
 	}
 
 	

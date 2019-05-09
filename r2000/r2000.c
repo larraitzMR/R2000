@@ -173,13 +173,13 @@ int main(
 				printf("msg: %s\n", msg);
 			} else if (strncmp(msg, "GET_POWER", 9) == 0) {
 				printf("msg: %s\n", msg);
-				char pow[4] = ""; 
+				char pow[6] = ""; 
 				power = getAntennaPower(handle);
 				printf("ENVIADO POWER: %.1f\n", power);
 				//itoa(power, pow, 10);
 				sprintf(pow, "%.1f", power);
 				//string str = string(intStr);
-				printf("POW: %s\n", pow);
+				//printf("POW: %s\n", pow);
 				send(client, pow, sizeof(pow), 0);
 			} 
 			else if (strncmp(msg, "SET_POWER", 9) == 0) {
@@ -188,8 +188,8 @@ int main(
 				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
 				nuevo[longitud] = '\0';
 				strncpy(nuevo, msg + 9, longitud);
-				printf("NUEVO: %s\n", nuevo);
-				double value = atoi(nuevo);
+				//printf("NUEVO: %s\n", nuevo);
+				double value = atof(nuevo);
 				printf("RECIBIDO POWER: %.1f\n", value);
 				setAntennaPower(handle, value);
 			} 

@@ -1,8 +1,20 @@
-﻿  reader_params.c
-c:\users\propietario\documents\github\r2000\r2000\reader_params.c(200): warning C4244: 'return': conversión de 'double' a 'int'; posible pérdida de datos
-c:\users\propietario\documents\github\r2000\r2000\reader_params.c(230): warning C4477: 'printf' : la cadena de formato '%.1f' requiere un argumento de tipo 'double', pero el argumento variádico 1 tiene el tipo 'INT32U'
-c:\users\propietario\documents\github\r2000\r2000\reader_params.c(226): warning C4244: 'inicializando': conversión de 'double' a 'int'; posible pérdida de datos
-c:\users\propietario\documents\github\r2000\r2000\reader_params.c(268): warning C4101: 'serial': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\reader_params.c(245): warning C4101: 'pSerialNumber': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\reader_params.c(234): warning C4715: 'setAntennaPower': no todas las rutas de acceso de control devuelven un valor
+﻿  r2000.c
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(222): warning C4047: 'función': 'char *' es distinto en los niveles de direccionamiento indirecto de 'int *[4]'
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(222): warning C4024: 'getConnectedAntennaPorts': tipos distintos para el parámetro formal y el parámetro real 2
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(224): warning C4047: 'función': 'const char *' es distinto en los niveles de direccionamiento indirecto de 'int *[4]'
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(224): warning C4024: 'send': tipos distintos para el parámetro formal y el parámetro real 2
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(234): warning C4013: 'setSelectedAntena' sin definir; se supone que extern devuelve como resultado int
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(37): warning C4101: 'antenna': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(45): warning C4101: 'linkProfile': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(34): warning C4101: 'pstate': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(57): warning C4101: 'client2': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(47): warning C4101: 'pRegion': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(44): warning C4101: 'pmode': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(41): warning C4101: 'antennaPort': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(70): warning C4101: 'nuevo': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(56): warning C4101: 'WSAData': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(36): warning C4101: 'index': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(40): warning C4101: 'antennaConfig': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(39): warning C4101: 'antennaStatus': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(48): warning C4101: 'pRegionConfig': variable local sin referencia
   r2000.vcxproj -> C:\Users\Propietario\Documents\GitHub\R2000\Debug\r2000.exe
