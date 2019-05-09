@@ -18,99 +18,10 @@
 #include "r2000.h"
 #include "reader_params.h"
 
-#include "byte_swap.h"
-#include "oemcfg.h"
+
 
 #pragma comment(lib, "wsock32.lib")
 #pragma comment(lib, "rfid.lib")
-
-#define OEMCFG_USBD_32BIT_LEN           40
-#define OEMCFG_USBD_16BIT_LEN           OEMCFG_USBD_32BIT_LEN * 2
-#define OEMCFGADDR_PBA_NUM_32BIT_LEN    4
-
-
-typedef struct
-{
-	INT8U   byteLength;
-	INT8U   usbDescriptorType;
-	INT16U  name[OEMCFG_USBD_16BIT_LEN - 1];
-} USB_STRING_DESCRIPTOR;
-
-
-
-void ConvertUsbString(
-	char*           destination,
-	const INT16U*   source,
-	INT32U          length
-)
-{
-	/* Cheap way to do Unicode to ASCII - this assumes that the Unicode string*/
-	/* really just represents an ASCII string and we are simply removing the  */
-	/* upper nibble (which is 0x00).                                          */
-	while (length && (*source != 0))
-	{
-		length--;
-		*destination++ = (char)*source++;
-	}
-
-} /* ConvertUsbString */
-
-void OemConfigMacToHost(
-	OEMCFG_AREA_MAP* pConfig
-)
-{
-
-	USB_STRING_DESCRIPTOR*   pManufacturerName;
-	USB_STRING_DESCRIPTOR*   pProductName;
-	USB_STRING_DESCRIPTOR*   pSerialNumber;
-
-	/* Convert the 32-bit integers up to the manufacturer name first and then */
-	/* convert the 32-bit integers after the serial number through the end.   */
-	Int32ArrayMacToHost(
-		(INT32U *)pConfig,
-		((INT32U *)&pConfig->mfg_name) - ((INT32U *)pConfig));
-	Int32ArrayMacToHost(
-		&pConfig->ant_avail,
-		((INT32U *)(pConfig + 1)) - &pConfig->ant_avail);
-
-	/* Convert the USB Unicode strings to host format.                        */
-	pManufacturerName = (USB_STRING_DESCRIPTOR*)pConfig->mfg_name;
-	pProductName = (USB_STRING_DESCRIPTOR*)pConfig->prod_name;
-	pSerialNumber = (USB_STRING_DESCRIPTOR*)pConfig->serial_num;
-	Int16ArrayMacToHost(
-		pManufacturerName->name,
-		(pManufacturerName->byteLength - 2) / 2);
-	Int16ArrayMacToHost(
-		pProductName->name,
-		(pProductName->byteLength - 2) / 2);
-	Int16ArrayMacToHost(
-		pSerialNumber->name,
-		(pSerialNumber->byteLength - 2) / 2);
-} /* OemConfigMacToHost */
-
-void Int32ArrayMacToHost(
-	INT32U*         pBegin,
-	INT32U          numberInt32
-)
-{
-	for (; numberInt32; --numberInt32, ++pBegin)
-	{
-		*pBegin = MacToHost32(*pBegin);
-	}
-} /* Int32ArrayMacToHost */
-
-void Int16ArrayMacToHost(
-	INT16U*         pBegin,
-	INT32U          numberInt16
-)
-{
-	for (; numberInt16; --numberInt16, ++pBegin)
-	{
-		*pBegin = MacToHost16(*pBegin);
-	}
-}
-
-
 
 int main(
 	int     argc,
@@ -136,13 +47,6 @@ int main(
 	RFID_MAC_REGION*			pRegion;
 	void*						pRegionConfig;
 
-	OEMCFG_AREA_MAP          oemConfig;
-	char                     tempString[OEMCFG_USBD_32BIT_LEN * 4];
-	INT32U                   numToRead = ((INT32U)&oemConfig.hw_options4 - (INT32U)&oemConfig) / sizeof(INT32U);
-	char*                    regionString;
-	USB_STRING_DESCRIPTOR*   pManufacturerName;
-	USB_STRING_DESCRIPTOR*   pProductName;
-	USB_STRING_DESCRIPTOR*   pSerialNumber;
 
 
 	RFID_UNREFERENCED_LOCAL(argc);
@@ -228,84 +132,6 @@ int main(
 	}
 
 
-	pRegion = (RFID_MAC_REGION *)malloc(sizeof(RFID_MAC_REGION));
-	pRegionConfig = NULL;
-	status = RFID_MacGetRegion(handle, pRegion, pRegionConfig);
-
-
-	/* HABILITAR ANTENAS*/
-	/*
-	antennaPort = 1;
-	status = RFID_AntennaPortGetStatus(handle, antennaPort, &antennaStatus);
-	//antennaStatus.state = RFID_ANTENNA_PORT_STATE_ENABLED;
-	status = RFID_AntennaPortSetState(handle, antennaPort, RFID_ANTENNA_PORT_STATE_ENABLED);*/
-
-
-	/*
- 	status = RFID_RadioGetOperationMode(handle, &pmode);
-	//printf("\tRadioHandle used: %u", handle);
-	printf("PowerStat found: %u\n ", pmode); */
-
-	UINT32 currentLinkProfile = 0;
-
-
-	//status = RFID_RadioGetLinkProfile(handle, currentLinkProfile, &linkProfile);
-	//printf("Length: %u\n ", linkProfile.length);
-	//printf("profileId: %u\n ", linkProfile.profileId);
-	//printf("profileVersion: %u \n", linkProfile.profileVersion);
-	//printf(" iso length: %u\n ", linkProfile.profileConfig.iso18K6C.tari);
-	//printf("Length: %u ", linkProfile.length);
-	//printf("Length: %u ", linkProfile.length);
-	//printf("Length: %u ", linkProfile.length);
-	//printf("Length: %u ", linkProfile.length);
-
-
-
-	/* Clear out the oemConfig structure, since we only load/read a fraction of it */
-	memset(&oemConfig, 0, sizeof(oemConfig));
-
-	/* Read the OEM configuration area and then convert it to the host-native */
-	/* format.  Note, if we were going to write this back to the MAC, then    */
-	/* we would have to convert it to MAC-native format before writing it.    */
-	status = RFID_MacReadOemData( handle, 0,	&numToRead, (INT32U *)&oemConfig);
-	if (RFID_STATUS_OK != status)
-	{
-		fprintf(stderr, "ERROR: RFID_MacReadOemData returned 0x%.8x\n", status);
-	}
-	OemConfigMacToHost(&oemConfig);
-	pManufacturerName = (USB_STRING_DESCRIPTOR*)oemConfig.mfg_name;
-	ConvertUsbString( tempString, pManufacturerName->name, (pManufacturerName->byteLength - 2) / sizeof(INT16U));
-	printf(	"Manufacturer:\t\t\t%.*s\n", (pManufacturerName->byteLength - 2) / sizeof(INT16U), tempString);
-
-	pProductName = (USB_STRING_DESCRIPTOR*)oemConfig.prod_name;
-	ConvertUsbString(tempString, pProductName->name, (pProductName->byteLength - 2) / sizeof(INT16U));
-	printf("Product Name:\t\t\t%.*s\n", (pProductName->byteLength - 2) / sizeof(INT16U), tempString);
-
-	pSerialNumber = (USB_STRING_DESCRIPTOR*)oemConfig.serial_num;
-	ConvertUsbString(tempString, pSerialNumber->name, (pSerialNumber->byteLength - 2) / sizeof(INT16U));
-	printf("Serial Number:\t\t\t%.*s\n", (pSerialNumber->byteLength - 2) / sizeof(INT16U), tempString);
-	printf("RSSI Threshod:\t\t\t%d dBm\n", oemConfig.rssi_threshold);
-	if (0 == oemConfig.regulatory_region)
-	{
-		regionString = "FCC";
-	}
-	else if (1 == oemConfig.regulatory_region)
-	{
-		regionString = "ETSI";
-	}
-	else if (2 == oemConfig.regulatory_region)
-	{
-		regionString = "ETSI(LBT)";
-	}
-	else
-	{
-		regionString = "???";
-	}
-	printf("Regulatory Region:\t\t%s\n", regionString);
-
-
-
-
 
 	/* COMUNICACIÓN SOCKET CON EL SOFTWARE MYRUNS */
 	server = configure_tcp_socket(5557);
@@ -339,50 +165,39 @@ int main(
 			
 			//printf("msg: %s\n", msg);
 			if (strncmp(msg, "DISCONNECT", 10) == 0) {
+				printf("msg: %s\n", msg);
 				conectado = 0;
 			}
 			if (strncmp(msg, "POWER_MINMAX", 12) == 0)
 			{ 
-				printf("%s\n", msg);
+				printf("msg: %s\n", msg);
 			} else if (strncmp(msg, "GET_POWER", 9) == 0) {
+				printf("msg: %s\n", msg);
 				char pow[4] = ""; 
 				power = getAntennaPower(handle);
-				printf("POWER: %.1f\n", power);
+				printf("ENVIADO POWER: %.1f\n", power);
 				//itoa(power, pow, 10);
-				sprintf(pow, "%.1f", power/10);
+				sprintf(pow, "%.1f", power);
 				//string str = string(intStr);
-				printf("%s\n", pow);
+				printf("POW: %s\n", pow);
 				send(client, pow, sizeof(pow), 0);
 			} 
 			else if (strncmp(msg, "SET_POWER", 9) == 0) {
-				printf("%s\n", msg);
+				printf("msg: %s\n", msg);
 				int longitud = strlen(msg) - 9;
 				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
 				nuevo[longitud] = '\0';
 				strncpy(nuevo, msg + 9, longitud);
-				//printf("Set_Power: %s\n", nuevo);
-				//fflush(stdout);
-				/*double value = (double)atoi(nuevo)/100;*/
-				int value = atoi(nuevo);
+				printf("NUEVO: %s\n", nuevo);
+				double value = atoi(nuevo);
+				printf("RECIBIDO POWER: %.1f\n", value);
 				setAntennaPower(handle, value);
 			} 
 			else if (strcmp(msg, "GET_INFO") == 0) {
-				char info[15];
-
-				sprintf(info, "%d.%d.%d.%d", version.major, version.minor, version.maintenance, version.release);
-				printf("Version: %s\n", info);
-				 
-				memset(&oemConfig, 0, sizeof(oemConfig));
-				status = RFID_MacReadOemData(handle, 0, &numToRead, (INT32U *)&oemConfig);
-				if (RFID_STATUS_OK != status)
-				{
-					fprintf(stderr, "ERROR: RFID_MacReadOemData returned 0x%.8x\n", status); 
-				}
-				OemConfigMacToHost(&oemConfig);
-				pManufacturerName = (USB_STRING_DESCRIPTOR*)oemConfig.mfg_name;
-				ConvertUsbString(tempString, pManufacturerName->name, (pManufacturerName->byteLength - 2) / sizeof(INT16U));
-				printf("Manufacturer:\t\t\t%.*s\n", (pManufacturerName->byteLength - 2) / sizeof(INT16U), tempString);
-
+				printf("msg: %s\n", msg);
+				char info[40];
+				getReaderInfo(handle, info);
+				send(client, info, sizeof(info), 0);	
 			}
 			else if (strcmp(msg, "GET_ADV_OPT") == 0) {
 				status = RFID_18K6CGetQueryTagGroup(handle, &pGroup);
@@ -417,62 +232,7 @@ int main(
 				strncpy(nuevoDato, msg + 11, longitud);
 				printf("nuevo dato: %s\n", nuevoDato);
 				setSelectedAntena(handle, nuevoDato);
-				/*
-				int conectadas[4];
-				int numElementos = 0;
-
-				char* p;
-				int j = 0;
-				for (p = strtok(nuevoDato + 1, " "); p; p = strtok(NULL, " ")) {
-
-					INT32U value = atoi(p);
-					printf("NUMERO: %d\n", value);
-					if (value == 0) {}
-					else {
-						conectadas[j] = value;
-						printf("Conectadas: %d\n", conectadas[j]);
-						j++;
-						numElementos++;
-					}
-				}
-				if (numElementos == 0)
-				{
-					for (int i = 1; i < 5; i++)
-					{
-						antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
-						status = RFID_AntennaPortGetStatus(handle, i, &antennaStatus);
-						status = RFID_AntennaPortSetState(handle, i, RFID_ANTENNA_PORT_STATE_DISABLED);
-						status = RFID_AntennaPortSetConfiguration(handle, i, &antennaConfig);
-					}
-				}
-				else
-				{
-					for (int i = 0; i < 5; i++)
-					{
-						for (int j = 0; j < numElementos; j++)
-						{
-							printf("i: %d j: %d, conectadas[j]: %d\n", i, j, conectadas[j]);
-							if (conectadas[j] == i) {
-								//setEnabledAntena(handle, nuevoDato);
-								antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
-								status = RFID_AntennaPortGetStatus(handle, i, &antennaStatus);
-								if (RFID_ANTENNA_PORT_STATE_DISABLED == antennaStatus.state) {
-									printf("ENABLED\n");
-									status = RFID_AntennaPortSetState(handle, i, RFID_ANTENNA_PORT_STATE_ENABLED);
-									status = RFID_AntennaPortSetConfiguration(handle, i, &antennaConfig);
-								}
-								break;
-							}
-							else {
-								printf("DISABLED\n");
-								status = RFID_AntennaPortSetState(handle, i, RFID_ANTENNA_PORT_STATE_DISABLED);
-								status = RFID_AntennaPortSetConfiguration(handle, i, &antennaConfig);
-							}
-						}
-					}
-				}
-		
-				memset(conectadas, 0, sizeof(conectadas));*/
+			
 			}
  			memset(msg, 0, sizeof(msg));
 		}
