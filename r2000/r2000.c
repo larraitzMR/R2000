@@ -5,8 +5,6 @@
  *****************************************************************************
  */
 
-
-
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
@@ -17,8 +15,6 @@
 #include "network.h"
 #include "r2000.h"
 #include "reader_params.h"
-
-
 
 #pragma comment(lib, "wsock32.lib")
 #pragma comment(lib, "rfid.lib")
@@ -193,21 +189,8 @@ int main(
 				printf("RECIBIDO POWER: %.1f\n", value);
 				setAntennaPower(handle, value);
 			} 
-			else if (strcmp(msg, "GET_INFO") == 0) {
-				printf("msg: %s\n", msg);
-				char info[40];
-				getReaderInfo(handle, info);
-				send(client, info, sizeof(info), 0);	
-			}
-			else if (strcmp(msg, "GET_ADV_OPT") == 0) {
-				status = RFID_18K6CGetQueryTagGroup(handle, &pGroup);
-
-				RFID_18K6C_INVENTORY_SESSION session = pGroup.session;
-				RFID_18K6C_INVENTORY_SESSION_TARGET target = pGroup.target;
-
-			}
 			else if (strcmp(msg, "ANT_PORTS") == 0) {
-				printf("msg: %s\n", msg);
+				//printf("msg: %s\n", msg);
 			}
 			else if (strncmp(msg, "CON_ANT_PORTS", 13) == 0) { 
 				//que antenas estan enabled
@@ -230,9 +213,96 @@ int main(
 				nuevoDato = (char*)malloc(sizeof(char) * (longitud + 1));
 				nuevoDato[longitud] = '\0';
 				strncpy(nuevoDato, msg + 11, longitud);
-				printf("nuevo dato: %s\n", nuevoDato);
+				printf("CONECTADAS: %s\n", nuevoDato);
 				setSelectedAntena(handle, nuevoDato);
-			
+			}
+			else if (strncmp(msg, "GET_INFO", 8) == 0) {
+				printf("msg: %s\n", msg);
+				char info[9];
+				getReaderInfo(handle, info);
+				send(client, info, sizeof(info), 0);
+				memset(info, 0, sizeof(info));
+			}
+			else if (strncmp(msg, "GET_ADV_OPT", 11) == 0) {
+				printf("msg: %s\n", msg);
+				char option[7];
+
+				getAdvancedOptions(handle, option);
+				send(client, option, sizeof(option), 0);
+				memset(option, 0, sizeof(option));
+
+			} 
+			else if (strncmp(msg, "SET_REGION", 10) == 0) {
+				printf("msg: %s\n", msg);
+				int longitud = strlen(msg) - 11;
+				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+				nuevo[longitud] = '\0';
+				strncpy(nuevo, msg + 11, longitud);
+				printf("REGION: %s\n", nuevo);
+				fflush(stdout);
+
+				setAdvancedOptions(handle, "SET_REGION", nuevo);
+
+			}
+			else if (strncmp(msg, "SET_TARI", 8) == 0) {
+				printf("msg: %s\n", msg);
+				int longitud = strlen(msg) - 9;
+				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+				nuevo[longitud] = '\0';
+				strncpy(nuevo, msg + 9, longitud);
+				printf("SET TARI: %s\n", nuevo);
+				fflush(stdout);
+				setAdvancedOptions(handle, "SET_TARI", nuevo);
+
+			}
+			else if (strncmp(msg, "SET_BLF", 7) == 0) {
+				printf("msg: %s\n", msg);
+				int longitud = strlen(msg) - 8;
+				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+				nuevo[longitud] = '\0';
+				strncpy(nuevo, msg + 8, longitud);
+				printf("SET BLF: %s\n", nuevo);
+				fflush(stdout);
+				setAdvancedOptions(handle, "SET_BLF", nuevo);
+
+			}
+			else if (strncmp(msg, "SET_M", 5) == 0) {
+				printf("msg: %s\n", msg);
+				int longitud = strlen(msg) - 6;
+				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+				nuevo[longitud] = '\0';
+				strncpy(nuevo, msg + 6, longitud);
+				printf("SET M: %s\n", nuevo);
+				fflush(stdout);
+				setAdvancedOptions(handle, "SET_M", nuevo);
+
+			}
+			else if (strncmp(msg, "SET_Q", 5) == 0) {
+				printf("msg: %s\n", msg);
+				setAdvancedOptions(handle, "SET_Q", nuevo);
+
+			}
+			else if (strncmp(msg, "SET_SESSION", 11) == 0) {
+				printf("msg: %s\n", msg);
+				int longitud = strlen(msg) - 12;
+				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+				nuevo[longitud] = '\0';
+				strncpy(nuevo, msg + 12, longitud);
+				printf("SESION: %s\n", nuevo);
+				fflush(stdout);
+				setAdvancedOptions(handle, "SET_SESSION", nuevo);
+
+			}
+			else if (strncmp(msg, "SET_TARGET", 10) == 0) {
+				printf("msg: %s\n", msg);
+				int longitud = strlen(msg) - 11;
+				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+				nuevo[longitud] = '\0';
+				strncpy(nuevo, msg + 11, longitud);
+				printf("SET TARGET: %s\n", nuevo);
+				fflush(stdout);
+				setAdvancedOptions(handle, "SET_TARGET", nuevo);
+
 			}
  			memset(msg, 0, sizeof(msg));
 		}
