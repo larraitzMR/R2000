@@ -109,7 +109,7 @@ void PacketTrace(
  *
  * Description:
  *   Utility to conver the RFID_STATUS enum into a printable string
- *
+ *	
  * Parameters:
  *   status - The return status from a rfid_library API call
  *

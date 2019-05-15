@@ -165,8 +165,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="network.c" />
+    <ClCompile Include="print_packet.c" />
     <ClCompile Include="r2000.c" />
     <ClCompile Include="reader_params.c" />
+    <ClCompile Include="sample_utility.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

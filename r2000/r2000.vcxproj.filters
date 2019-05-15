@@ -35,5 +35,11 @@
     <ClCompile Include="network.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sample_utility.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="print_packet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

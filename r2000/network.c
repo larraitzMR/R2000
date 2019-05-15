@@ -7,6 +7,7 @@
 #include "network.h"
 #include <windows.h>
 #include <ws2tcpip.h>
+#include <fcntl.h>	
 
 
 #pragma comment(lib, "wsock32.lib")
@@ -172,6 +173,53 @@ int read_udp_message(int sock_descriptor, char *message, char len) {
  */
 int configure_tcp_socket(int port) {
 
+
+	printf("Listening for incoming connections...\n");
+
+	WSAStartup(MAKEWORD(2, 0), &WSAData);
+	if ((ReceivingSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+		return -1;
+	}
+	else {
+		printf("Server: socket() is OK!\n");
+	}
+
+	memset(&ReceiverAddr, 0, sizeof(ReceiverAddr));
+	memset(&clientAddr, 0, sizeof(clientAddr));
+
+	ReceiverAddr.sin_addr.s_addr = INADDR_ANY;
+	ReceiverAddr.sin_family = AF_INET;
+	ReceiverAddr.sin_port = htons(port);
+
+
+	// Bind the socket with the server address 
+	if (bind(ReceivingSocket, (SOCKADDR *)&ReceiverAddr, sizeof(ReceiverAddr)) < 0)
+	{
+		perror("bind failed");
+		exit(EXIT_FAILURE);
+	}
+
+	// Some info on the receiver side...
+
+	getsockname(ReceivingSocket, (SOCKADDR *)&ReceiverAddr, (int *)sizeof(ReceiverAddr));
+
+	printf("Server: I'm listening and waiting connection on port %d\n", port);
+
+	//printf("Server: Receiving IP(s) used : %s\n", inet_pton(AF_INET, "192.168.1.52", &ReceiverAddr.sin_addr));
+	printf("Server: Receiving port used : %d\n", htons(ReceiverAddr.sin_port));
+	//printf("Server: I\'m ready to receive a datagram...\n");
+
+	listen(ReceivingSocket, 0);
+	printf("Listening for incoming connections...\n");
+
+	return ReceivingSocket;
+} // CONFIGURE_TCP_SOCKET END
+
+/* Configure a local TCP listen socket in a given port.
+ * Return socket descriptor or -1 in case of error
+ */
+int configure_nonBlocking_tcp_socket(int port) {
+	int flags;
 
 	printf("Listening for incoming connections...\n");
 
