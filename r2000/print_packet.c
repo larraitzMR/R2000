@@ -95,7 +95,7 @@ void PrintPacket(
 	RFID_PACKET_COMMON *common = (RFID_PACKET_COMMON *)packet;
 	INT16U packetType = MacToHost16(common->pkt_type);
 
-	PrintIndentedLine(indent, "Packet version: %u\n", common->pkt_ver);
+	//PrintIndentedLine(indent, "Packet version: %u\n", common->pkt_ver);
 	switch (packetType)
 	{
 	case RFID_PACKET_TYPE_COMMAND_BEGIN:
@@ -104,18 +104,18 @@ void PrintPacket(
 			(RFID_PACKET_COMMAND_BEGIN *)packet;
 		INT32U command = MacToHost32(cmdbegin->command);
 
-		PrintIndentedLine(indent,
-			"Packet type: RFID_PACKET_COMMAND_BEGIN\n");
-		PrintIndentedLine(indent,
-			"Operation was%s executed in continuous mode\n",
-			common->flags & 1 ? "" : " not");
-		PrintIndentedLine(indent, "Operation started at millisecond %u\n",
-			MacToHost32(cmdbegin->ms_ctr));
-		PrintIndentedLine(indent, "Operation that is beginning:");
+		//PrintIndentedLine(indent,
+		//	"Packet type: RFID_PACKET_COMMAND_BEGIN\n");
+		//PrintIndentedLine(indent,
+		//	"Operation was%s executed in continuous mode\n",
+		//	common->flags & 1 ? "" : " not");
+		//PrintIndentedLine(indent, "Operation started at millisecond %u\n",
+		//	MacToHost32(cmdbegin->ms_ctr));
+		//PrintIndentedLine(indent, "Operation that is beginning:");
 		switch (command)
 		{
 		case CMD_18K6CINV:
-			printf(" Inventory\n");
+			//printf(" Inventory\n");
 			break;
 		case CMD_18K6CREAD:
 			printf(" Read\n");
@@ -149,13 +149,13 @@ void PrintPacket(
 		RFID_PACKET_COMMAND_END *cmdend =
 			(RFID_PACKET_COMMAND_END *)packet;
 		PrintIndentedLine(indent, "Packet type: RFID_PACKET_COMMAND_END\n");
-		PrintIndentedLine(indent, "Operation ended at millisecond %u\n",
-			MacToHost32(cmdend->ms_ctr));
-		PrintIndentedLine(indent, "Packet Flags: %u\n",
-			MacToHost32(cmdend->cmn.flags));
-		PrintIndentedLine(indent, "Operation status: %u (%s)\n",
-			MacToHost32(cmdend->status),
-			cmdend->status ? "Failed" : "Succeeded");
+		//PrintIndentedLine(indent, "Operation ended at millisecond %u\n",
+		//	MacToHost32(cmdend->ms_ctr));
+		//PrintIndentedLine(indent, "Packet Flags: %u\n",
+		//	MacToHost32(cmdend->cmn.flags));
+		//PrintIndentedLine(indent, "Operation status: %u (%s)\n",
+		//	MacToHost32(cmdend->status),
+		//	cmdend->status ? "Failed" : "Succeeded");
 		break;
 	}
 	case RFID_PACKET_TYPE_ANTENNA_CYCLE_BEGIN:
@@ -201,6 +201,7 @@ void PrintPacket(
 			((MacToHost16(common->pkt_len) - 3) * 4) - (common->flags >> 6);
 
 		INT8U *byteData = (INT8U *)&inv->inv_data[0];
+		INT16U rssi = (INT8U *)&inv->rssi;
 		int epcLength = 0;
 		int tidLength = 0;
 		if (((common->flags >> 2) & 0x03) == 0x01)  /* M4 TID (12 bytes) is included in data */
@@ -209,16 +210,18 @@ void PrintPacket(
 		}
 		epcLength = length - tidLength - 4;  /* -4 for 16-bit PC and CRC */
 
-		PrintIndentedLine(indent,
+		/*PrintIndentedLine(indent,
 			"Packet type: RFID_PACKET_18K6C_INVENTORY\n");
 		PrintIndentedLine(indent, "Packet CRC was %s\n",
 			common->flags & 1 ? "invalid" : "valid");
 		PrintIndentedLine(indent, "Tag was inventoried at millisecond %u\n",
 			MacToHost32(inv->ms_ctr));
-		PrintIndentedLine(indent, "Inventory data is PC,EPC,CRC[,TID]: ");
-		PrintByteArrayNoFormatting(&byteData[0], 2, NULL, ",");
+		PrintIndentedLine(indent, "Inventory data is PC,EPC,CRC[,TID]: ");*/
+		/*PrintByteArrayNoFormatting(&byteData[0], 2, NULL, ",");*/
+		printf("EPC: ");
 		PrintByteArrayNoFormatting(&byteData[2], epcLength, NULL, ",");
-		PrintByteArrayNoFormatting(&byteData[2 + epcLength], 2, NULL, NULL);  /* +2 to get past PC */
+		printf("RSSI: %d ", rssi);
+		//PrintByteArrayNoFormatting(&byteData[2 + epcLength], 2, NULL, NULL);  /* +2 to get past PC */
 		/* if TID is included, print it out */
 		if (tidLength != 0)
 		{

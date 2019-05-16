@@ -11,11 +11,14 @@
 #include <stdlib.h>
 #include <WinSock2.h>
 #include "rfid_library.h"
+#include "rfid_packets.h"
+#include "byte_swap.h"
 
 #include "network.h"
 #include "r2000.h"
 #include "reader_params.h"
 #include "sample_utility.h"
+
 
 #pragma comment(lib, "wsock32.lib")
 #pragma comment(lib, "rfid.lib")
@@ -64,7 +67,8 @@ INT8U      maxOriginalAntennas = 0;
 INT8U      maxAccessAPIRetries = 6;
 INT8U      accessAPIRetryCount = 0;
 
-int stop = 0;
+int startReading = 0;
+SOCKET clientRead;
 
 INT32S PacketCallbackFunction(
 	RFID_RADIO_HANDLE   handle,
@@ -75,27 +79,127 @@ INT32S PacketCallbackFunction(
 {
 	int *indent = (int *)context;
 	RFID_UNREFERENCED_LOCAL(handle);
+	int hex[13];
+	char rfid_report_msg[20];
+	int index;
+	char buf[24] = "";
+	char b[1] = "";
 
-	PacketTrace(bufferLength, pBuffer, indent);
+
+	//PacketTrace(bufferLength, pBuffer, indent);
+
+	RFID_PACKET_COMMON *common = (RFID_PACKET_COMMON *)pBuffer;
+	INT16U packetType = MacToHost16(common->pkt_type);
+
+	RFID_PACKET_18K6C_INVENTORY *inv = (RFID_PACKET_18K6C_INVENTORY *)pBuffer;
+
+	int length =
+		((MacToHost16(common->pkt_len) - 3) * 4) - (common->flags >> 6);
+
+	INT8U *byteData = (INT8U *)&inv->inv_data[0];
+	INT8U rssi = (INT8U *)&inv->rssi;
+
+	int epcLength = 0;
+	int tidLength = 0;
+	if (((common->flags >> 2) & 0x03) == 0x01)  /* M4 TID (12 bytes) is included in data */
+	{
+		tidLength = 12;
+	}
+	epcLength = length - tidLength - 4;  /* -4 for 16-bit PC and CRC */
+
+
+	for (index = 2; index < 14; ++index)
+	{
+		//printf("%.2x", byteData[index]);
+		hex[index - 2] = byteData[index];
+		sprintf(b, "%.2x", byteData[index]);
+		printf("%s", b);
+		strcat(buf, b);
+		//sprintf(hex[i], "%.2X", byteData[index]);
+	
+	}
+	printf("\n");
+	hex[12] = rssi;
+	//buf[12] = rssi;
+	//rfid_report_msg[0] = hex;
+	//rfid_report_msg[1] = rssi;
+
+	//printf("Buffer: %s\n", buf);
+	send(clientRead, buf, sizeof(buf), 0);
+	memset(hex, 0, sizeof(hex));
+	//memset(b, "", sizeof(b));
+	//memset(buf, "", sizeof(b));
 
 	return 0;
 }
 
+RFID_RADIO_HANDLE           handle;
+
+RFID_18K6C_INVENTORY_PARMS              inventoryParms;
+INT32U                                  inventoryFlags = 0;
+int                                     indent_level = 0;
+
+CONTEXT_PARMS               context;
+RFID_18K6C_READ_PARMS       readParms;
+INT8U                       readData[MAX_WORD_LENGTH * 2];
+INT16U                      writeData[MAX_WORD_LENGTH];
+
+RFID_18K6C_WRITE_PARMS      writeParms;
+RFID_18K6C_BLOCK_ERASE_PARMS            eraseParms;
+
+INT16U                      word;
+
+
+
 DWORD WINAPI hilo(void* data) {
-	int retval = 0;
+	int status = 0;
 	char msg[20];
+	printf("HILO\n");
+	/* Set up the inventory parameters */
+	inventoryParms.length = sizeof(RFID_18K6C_INVENTORY_PARMS);
+	inventoryParms.common.tagStopCount = 0;
+	inventoryParms.common.pCallback = PacketCallbackFunction;
+	inventoryParms.common.pCallbackCode = NULL;
+	inventoryParms.common.context = &indent_level;
 
-	while (stop == 0) {
-		printf("HILO\n");
+	//context.succesfulAccessPackets = 0;
+	//context.pReadData = readData;
+	//readParms.length = sizeof(readParms);
+	//readParms.readCmdParms.length = sizeof(readParms.readCmdParms);
+	//readParms.readCmdParms.bank = g_MemBank;
+	//readParms.readCmdParms.count = g_WordLength;
+	//readParms.readCmdParms.offset = g_StartOffset;
+	//readParms.accessPassword = 0;
+	//readParms.common.pCallback = RfidTagAccessCallback;
+	//readParms.common.pCallbackCode = NULL;
+	//readParms.common.tagStopCount = 0;
+	//readParms.common.context = &context;
+	int index;
 
-		// Do stuff.  This will be the first function called on the new thread.
-		// When this function returns, the thread goes away.  See MSDN for more details.
-		retval = recv(data, msg, sizeof(msg), 0);
-		printf("msg HILO: %s\n", msg);
-		if (strncmp(msg, "STOP_READING", 13) == 0) {
-			printf("RECIBIDO STOP READING");
-			stop = 1;
+	while (startReading == 1) {
+		printf("START READING\n");
+		/* Attempt to perform an inventory on the radio */
+		if (RFID_STATUS_OK !=
+			(status = RFID_18K6CTagInventory(handle, &inventoryParms, inventoryFlags)))
+		{
+			printf("RFID_18K6CTagInventory failed: RC = %d\n", status);
 		}
+
+
+		//status = RFID_18K6CTagRead(handle, &readParms, 0);
+		//printf("Read Data=");
+
+		///* Flip all of the  bits so we have something to write back that is    */
+		///* different from the tag's current bits.                              */
+		//for (index = 0; index < g_WordLength; ++index)
+		//{
+		//	word = (((INT16U)readData[index * 2]) << 8) | readData[(index * 2) + 1];
+		//	printf("%04X ", word);
+		//	writeData[index] = ~word;
+		//}
+		//printf("\n\n");
+
+
 	}
 	return 0;
 }
@@ -110,7 +214,7 @@ int main(
 {
 	RFID_STATUS                 status;
 	RFID_RADIO_ENUM*            pEnum;
-	RFID_RADIO_HANDLE           handle;
+
 	RFID_RADIO_POWER_STATE		pstate;
 	RFID_RADIO_INFO*			pInfo;
 	INT32U                      index; 
@@ -127,26 +231,13 @@ int main(
 	RFID_MAC_REGION*			pRegion;
 	void*						pRegionConfig;
 
-	INT8U                       readData[MAX_WORD_LENGTH * 2];
-	INT16U                      writeData[MAX_WORD_LENGTH];
-	RFID_18K6C_READ_PARMS       readParms;
-	RFID_18K6C_WRITE_PARMS      writeParms;
-	RFID_18K6C_BLOCK_ERASE_PARMS            eraseParms;
-	CONTEXT_PARMS               context;
-	INT16U                      word;
-
-	RFID_18K6C_INVENTORY_PARMS              inventoryParms;
-	INT32U                                  inventoryFlags = 0;
-	int                                     indent_level = 0;
-
-
 
 	RFID_UNREFERENCED_LOCAL(argc);
 	RFID_UNREFERENCED_LOCAL(argv);
 
 	//Servidor socket
 	WSADATA WSAData;
-	SOCKET server, client, clientRead;
+	SOCKET server, client;
 	//SOCKADDR_IN  clientAddr;
 	struct sockaddr_in clientAddr, clientAddrRead;
 	char buffer[10];
@@ -250,9 +341,9 @@ int main(
 	{
 		printf("Conectado para enviar tags!\n");
 	}
-	if (ioctlsocket(clientRead, FIONBIO, 1) != 0) {
-		printf("Non blocking error!\n");
-	}
+	//if (ioctlsocket(clientRead, FIONBIO, 1) != 0) {
+	//	printf("Non blocking error !\n");
+	//}
 	printf("\n");
 
 	server = configure_tcp_socket(5558);
@@ -263,9 +354,6 @@ int main(
 	}
 
 	printf("\n");
-	HANDLE thread = CreateThread(NULL, 0, hilo, clientRead, 0, NULL);
-
-
 
 	if (conectado == 1 && preparado == 1)
 	{
@@ -414,97 +502,103 @@ int main(
 			}
 			else if (strncmp(msg, "START_READING", 13) == 0) {
 				printf("msg: %s\n", msg);
+				HANDLE thread = CreateThread(NULL, 0, hilo, clientRead, 0, NULL);
+				startReading = 1;
 
-				/*context.succesfulAccessPackets = 0;
-				context.pReadData = readData;
-				readParms.length = sizeof(readParms);
-				readParms.readCmdParms.length = sizeof(readParms.readCmdParms);
-				readParms.readCmdParms.bank = g_MemBank;
-				readParms.readCmdParms.count = g_WordLength;
-				readParms.readCmdParms.offset = g_StartOffset;
-				readParms.accessPassword = 0;
-				readParms.common.pCallback = RfidTagAccessCallback;
-				readParms.common.pCallbackCode = NULL;
-				readParms.common.tagStopCount = 0;
-				readParms.common.context = &context;*/
-
-				/* Set up the inventory parameters */
-				inventoryParms.length = sizeof(RFID_18K6C_INVENTORY_PARMS);
-				inventoryParms.common.tagStopCount = 0;
-				inventoryParms.common.pCallback = PacketCallbackFunction;
-				inventoryParms.common.pCallbackCode = NULL;
-				inventoryParms.common.context = &indent_level;
-
-				while (strncmp(msg, "STOP_READING", 12) != 0) {
-					printf("msg: %s\n", msg);
-
-					///* Keep attempting to read from the tag's memory until it     */
-					///* succeeds or until the tag-read function fails for some reason.         */
-					//accessAPIRetryCount = 0;
-					//while ((RFID_STATUS_OK == status) &&
-					//	!context.succesfulAccessPackets &&
-					//	(accessAPIRetryCount < maxAccessAPIRetries))
-					//{
-					//	printf("Attempting to read \n\n");
-
-					//	status = RFID_18K6CTagRead(handle, &readParms, 0);
-					//	if (RFID_STATUS_OK != status)
-					//	{
-					//		fprintf(
-					//			stderr,
-					//			"ERROR: RFID_18K6CTagRead returned 0x%.8x\n",
-					//			status);
-					//	}
-					//	RFID_MacClearError(handle);
-					//	accessAPIRetryCount++;
-					//}
-					//if (!context.succesfulAccessPackets)
-					//{
-					//	printf("Tag access read failed\n");
-					//}
-
-					//printf("Read Data=");
-
-					///* Flip all of the  bits so we have something to write back that is    */
-					///* different from the tag's current bits.                              */
-					//for (index = 0; index < g_WordLength; ++index)
-					//{
-					//	word = (((INT16U)readData[index * 2]) << 8) | readData[(index * 2) + 1];
-					//	printf("%04X ", word);
-					//	writeData[index] = ~word;
-					//}
-
-					//printf("\n\n");
-
-					// /* Attempt to perform an inventory on the radio */
-					//if (RFID_STATUS_OK !=
-					//	(status = RFID_18K6CTagInventory(handle, &inventoryParms, inventoryFlags)))
-					//{
-					//	printf("RFID_18K6CTagInventory failed: RC = %d\n", status);
-					//}
-
-
-					status = RFID_18K6CTagRead(handle, &readParms, 0);
-					//printf("Read Data=");
-
-					///* Flip all of the  bits so we have something to write back that is    */
-					///* different from the tag's current bits.                              */
-					//for (index = 0; index < g_WordLength; ++index)
-					//{
-					//	word = (((INT16U)readData[index * 2]) << 8) | readData[(index * 2) + 1];
-					//	printf("%04X ", word);
-					//	writeData[index] = ~word;
-					//}
-					//printf("\n\n");
-
-					//send(clientRead, readData, sizeof(readData), 0);
-
-					//retval = recv(client, msg, sizeof(msg), 0);
-					//printf("msg: %s\n", msg);
-					/*memset(msg, 0, sizeof(msg));*/
-
-				}
 				
+
+				///*context.succesfulAccessPackets = 0;
+				//context.pReadData = readData;
+				//readParms.length = sizeof(readParms);
+				//readParms.readCmdParms.length = sizeof(readParms.readCmdParms);
+				//readParms.readCmdParms.bank = g_MemBank;
+				//readParms.readCmdParms.count = g_WordLength;
+				//readParms.readCmdParms.offset = g_StartOffset;
+				//readParms.accessPassword = 0;
+				//readParms.common.pCallback = RfidTagAccessCallback;
+				//readParms.common.pCallbackCode = NULL;
+				//readParms.common.tagStopCount = 0;
+				//readParms.common.context = &context;*/
+
+				///* Set up the inventory parameters */
+				//inventoryParms.length = sizeof(RFID_18K6C_INVENTORY_PARMS);
+				//inventoryParms.common.tagStopCount = 0;
+				//inventoryParms.common.pCallback = PacketCallbackFunction;
+				//inventoryParms.common.pCallbackCode = NULL;
+				//inventoryParms.common.context = &indent_level;
+
+				//while (strncmp(msg, "STOP_READING", 12) != 0) {
+				//	printf("msg: %s\n", msg);
+
+				//	///* Keep attempting to read from the tag's memory until it     */
+				//	///* succeeds or until the tag-read function fails for some reason.         */
+				//	//accessAPIRetryCount = 0;
+				//	//while ((RFID_STATUS_OK == status) &&
+				//	//	!context.succesfulAccessPackets &&
+				//	//	(accessAPIRetryCount < maxAccessAPIRetries))
+				//	//{
+				//	//	printf("Attempting to read \n\n");
+
+				//	//	status = RFID_18K6CTagRead(handle, &readParms, 0);
+				//	//	if (RFID_STATUS_OK != status)
+				//	//	{
+				//	//		fprintf(
+				//	//			stderr,
+				//	//			"ERROR: RFID_18K6CTagRead returned 0x%.8x\n",
+				//	//			status);
+				//	//	}
+				//	//	RFID_MacClearError(handle);
+				//	//	accessAPIRetryCount++;
+				//	//}
+				//	//if (!context.succesfulAccessPackets)
+				//	//{
+				//	//	printf("Tag access read failed\n");
+				//	//}
+
+				//	//printf("Read Data=");
+
+				//	///* Flip all of the  bits so we have something to write back that is    */
+				//	///* different from the tag's current bits.                              */
+				//	//for (index = 0; index < g_WordLength; ++index)
+				//	//{
+				//	//	word = (((INT16U)readData[index * 2]) << 8) | readData[(index * 2) + 1];
+				//	//	printf("%04X ", word);
+				//	//	writeData[index] = ~word;
+				//	//}
+
+				//	//printf("\n\n");
+
+				//	// /* Attempt to perform an inventory on the radio */
+				//	//if (RFID_STATUS_OK !=
+				//	//	(status = RFID_18K6CTagInventory(handle, &inventoryParms, inventoryFlags)))
+				//	//{
+				//	//	printf("RFID_18K6CTagInventory failed: RC = %d\n", status);
+				//	//}
+
+
+				//	status = RFID_18K6CTagRead(handle, &readParms, 0);
+				//	//printf("Read Data=");
+
+				//	///* Flip all of the  bits so we have something to write back that is    */
+				//	///* different from the tag's current bits.                              */
+				//	//for (index = 0; index < g_WordLength; ++index)
+				//	//{
+				//	//	word = (((INT16U)readData[index * 2]) << 8) | readData[(index * 2) + 1];
+				//	//	printf("%04X ", word);
+				//	//	writeData[index] = ~word;
+				//	//}
+				//	//printf("\n\n");
+
+				//	//send(clientRead, readData, sizeof(readData), 0);
+
+				//	//retval = recv(client, msg, sizeof(msg), 0);
+				//	//printf("msg: %s\n", msg);
+				//	/*memset(msg, 0, sizeof(msg));*/
+
+			} else if (strncmp(msg, "STOP_READING", 13) == 0) {
+				printf("msg: %s\n", msg);
+				startReading = 0;
+				//CloseHandle(hilo);
 			}
  			memset(msg, 0, sizeof(msg));
 		}
