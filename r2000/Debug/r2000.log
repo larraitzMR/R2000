@@ -1,26 +1,30 @@
 ﻿  r2000.c
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(100): warning C4047: 'inicializando': 'INT8U' es distinto en los niveles de direccionamiento indirecto de 'INT8U *'
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(83): warning C4101: 'rfid_report_msg': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(156): warning C4101: 'msg': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(177): warning C4101: 'index': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(407): warning C4047: 'función': 'char *' es distinto en los niveles de direccionamiento indirecto de 'int *[4]'
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(407): warning C4024: 'getConnectedAntennaPorts': tipos distintos para el parámetro formal y el parámetro real 2
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(409): warning C4047: 'función': 'const char *' es distinto en los niveles de direccionamiento indirecto de 'int *[4]'
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(409): warning C4024: 'send': tipos distintos para el parámetro formal y el parámetro real 2
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(419): warning C4013: 'setSelectedAntena' sin definir; se supone que extern devuelve como resultado int
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(480): warning C4047: 'función': 'char *' es distinto en los niveles de direccionamiento indirecto de 'char *[20]'
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(480): warning C4024: 'setAdvancedOptions': tipos distintos para el parámetro formal y el parámetro real 3
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(505): warning C4022: 'CreateThread': no coincide el puntero para el parámetro real 4
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(221): warning C4101: 'antenna': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(229): warning C4101: 'linkProfile': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(218): warning C4101: 'pstate': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(231): warning C4101: 'pRegion': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(228): warning C4101: 'pmode': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(225): warning C4101: 'antennaPort': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(239): warning C4101: 'WSAData': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(220): warning C4101: 'index': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(226): warning C4101: 'pGroup': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(224): warning C4101: 'antennaConfig': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(223): warning C4101: 'antennaStatus': variable local sin referencia
-c:\users\propietario\documents\github\r2000\r2000\r2000.c(232): warning C4101: 'pRegionConfig': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(69): warning C4047: 'inicializando': 'INT8U' es distinto en los niveles de direccionamiento indirecto de 'INT8U *'
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(59): warning C4101: 'b': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(55): warning C4101: 'index': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(128): warning C4101: 'msg': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(137): warning C4101: 'index': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(153): warning C4101: 'msg': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(409): warning C4047: 'función': 'char *' es distinto en los niveles de direccionamiento indirecto de 'int *[4]'
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(409): warning C4024: 'getConnectedAntennaPorts': tipos distintos para el parámetro formal y el parámetro real 2
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(411): warning C4047: 'función': 'const char *' es distinto en los niveles de direccionamiento indirecto de 'int *[4]'
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(411): warning C4024: 'send': tipos distintos para el parámetro formal y el parámetro real 2
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(421): warning C4013: 'setSelectedAntena' sin definir; se supone que extern devuelve como resultado int
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(482): warning C4047: 'función': 'char *' es distinto en los niveles de direccionamiento indirecto de 'char *[20]'
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(482): warning C4024: 'setAdvancedOptions': tipos distintos para el parámetro formal y el parámetro real 3
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(507): warning C4022: 'CreateThread': no coincide el puntero para el parámetro real 4
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(516): warning C4022: 'CreateThread': no coincide el puntero para el parámetro real 4
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(223): warning C4101: 'antenna': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(231): warning C4101: 'linkProfile': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(220): warning C4101: 'pstate': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(233): warning C4101: 'pRegion': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(230): warning C4101: 'pmode': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(227): warning C4101: 'antennaPort': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(241): warning C4101: 'WSAData': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(222): warning C4101: 'index': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(228): warning C4101: 'pGroup': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(226): warning C4101: 'antennaConfig': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(225): warning C4101: 'antennaStatus': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(234): warning C4101: 'pRegionConfig': variable local sin referencia
+c:\users\propietario\documents\github\r2000\r2000\r2000.c(207): warning C4716: 'readInfo': debe devolver un valor
   r2000.vcxproj -> C:\Users\Propietario\Documents\GitHub\R2000\Debug\r2000.exe

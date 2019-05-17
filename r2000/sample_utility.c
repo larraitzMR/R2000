@@ -124,6 +124,7 @@ INT32S RfidTagAccessCallback(
 {
 	INT32S          status = 0;
 	CONTEXT_PARMS*  pParms = (CONTEXT_PARMS *)context;
+	RFID_PACKET_18K6C_INVENTORY *inv = (RFID_PACKET_18K6C_INVENTORY *)pBuffer;
 
 	RFID_UNREFERENCED_LOCAL(handle);
 

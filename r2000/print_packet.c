@@ -215,13 +215,13 @@ void PrintPacket(
 		PrintIndentedLine(indent, "Packet CRC was %s\n",
 			common->flags & 1 ? "invalid" : "valid");
 		PrintIndentedLine(indent, "Tag was inventoried at millisecond %u\n",
-			MacToHost32(inv->ms_ctr));
-		PrintIndentedLine(indent, "Inventory data is PC,EPC,CRC[,TID]: ");*/
-		/*PrintByteArrayNoFormatting(&byteData[0], 2, NULL, ",");*/
+			MacToHost32(inv->ms_ctr));*/
+		PrintIndentedLine(indent, "Inventory data is PC,EPC,CRC[,TID]: ");
+		PrintByteArrayNoFormatting(&byteData[0], 2, NULL, ",");
 		printf("EPC: ");
 		PrintByteArrayNoFormatting(&byteData[2], epcLength, NULL, ",");
 		printf("RSSI: %d ", rssi);
-		//PrintByteArrayNoFormatting(&byteData[2 + epcLength], 2, NULL, NULL);  /* +2 to get past PC */
+		PrintByteArrayNoFormatting(&byteData[2 + epcLength], 2, NULL, NULL);  /* +2 to get past PC */
 		/* if TID is included, print it out */
 		if (tidLength != 0)
 		{
