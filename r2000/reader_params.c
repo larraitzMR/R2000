@@ -284,38 +284,38 @@ void ConvertUsbString(
 
 } /* ConvertUsbString */
 
-void OemConfigMacToHost(
-	OEMCFG_AREA_MAP* pConfig
-)
-{
-
-	USB_STRING_DESCRIPTOR*   pManufacturerName;
-	USB_STRING_DESCRIPTOR*   pProductName;
-	USB_STRING_DESCRIPTOR*   pSerialNumber;
-
-	/* Convert the 32-bit integers up to the manufacturer name first and then */
-	/* convert the 32-bit integers after the serial number through the end.   */
-	Int32ArrayMacToHost(
-		(INT32U *)pConfig,
-		((INT32U *)&pConfig->mfg_name) - ((INT32U *)pConfig));
-	Int32ArrayMacToHost(
-		&pConfig->ant_avail,
-		((INT32U *)(pConfig + 1)) - &pConfig->ant_avail);
-
-	/* Convert the USB Unicode strings to host format.                        */
-	pManufacturerName = (USB_STRING_DESCRIPTOR*)pConfig->mfg_name;
-	pProductName = (USB_STRING_DESCRIPTOR*)pConfig->prod_name;
-	pSerialNumber = (USB_STRING_DESCRIPTOR*)pConfig->serial_num;
-	Int16ArrayMacToHost(
-		pManufacturerName->name,
-		(pManufacturerName->byteLength - 2) / 2);
-	Int16ArrayMacToHost(
-		pProductName->name,
-		(pProductName->byteLength - 2) / 2);
-	Int16ArrayMacToHost(
-		pSerialNumber->name,
-		(pSerialNumber->byteLength - 2) / 2);
-} /* OemConfigMacToHost */
+//void OemConfigMacToHost(
+//	OEMCFG_AREA_MAP* pConfig
+//)
+//{
+//
+//	USB_STRING_DESCRIPTOR*   pManufacturerName;
+//	USB_STRING_DESCRIPTOR*   pProductName;
+//	USB_STRING_DESCRIPTOR*   pSerialNumber;
+//
+//	/* Convert the 32-bit integers up to the manufacturer name first and then */
+//	/* convert the 32-bit integers after the serial number through the end.   */
+//	Int32ArrayMacToHost(
+//		(INT32U *)pConfig,
+//		((INT32U *)&pConfig->mfg_name) - ((INT32U *)pConfig));
+//	Int32ArrayMacToHost(
+//		&pConfig->ant_avail,
+//		((INT32U *)(pConfig + 1)) - &pConfig->ant_avail);
+//
+//	/* Convert the USB Unicode strings to host format.                        */
+//	pManufacturerName = (USB_STRING_DESCRIPTOR*)pConfig->mfg_name;
+//	pProductName = (USB_STRING_DESCRIPTOR*)pConfig->prod_name;
+//	pSerialNumber = (USB_STRING_DESCRIPTOR*)pConfig->serial_num;
+//	Int16ArrayMacToHost(
+//		pManufacturerName->name,
+//		(pManufacturerName->byteLength - 2) / 2);
+//	Int16ArrayMacToHost(
+//		pProductName->name,
+//		(pProductName->byteLength - 2) / 2);
+//	Int16ArrayMacToHost(
+//		pSerialNumber->name,
+//		(pSerialNumber->byteLength - 2) / 2);
+//} /* OemConfigMacToHost */
 
 void Int32ArrayMacToHost(
 	INT32U*         pBegin,
