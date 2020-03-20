@@ -7,12 +7,14 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+//#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <WinSock2.h>
 #include "rfid_library.h"
 #include "rfid_packets.h"
 #include "byte_swap.h"
+
 
 #include "network.h"
 #include "r2000.h"
@@ -328,6 +330,7 @@ int main(
 
 	double power = 0.0;
 	char* nuevo[20];
+	char* write[5];
 
 	/* Initialialize the RFID library                                         */
 	status = RFID_Startup(&version, 0);
@@ -598,8 +601,24 @@ int main(
 			}
 			else if (strncmp(msg, "WRITE_EPC", 9) == 0) {
 				printf("msg: %s\n", msg);
+				char* token;
+				int i = 0;
+
+				/* get the first token */
+				token = strtok(msg, " ");
+
+				/* walk through other tokens */
+				while (token != NULL) {
+					printf(" %s\n", token);
+					strcpy(write[i], token);
+					token = strtok(NULL, " ");
+					i++;
+				}
 				startReading = 0;
 				HANDLE thread = CreateThread(NULL, 0, writeTagData, clientRead, 0, NULL);
+				/*pthread_t tid;
+				pthread_create(&tid, NULL, hello, "hello world");
+				pthread_join(tid, NULL); */
 			}
 			memset(msg, 0, sizeof(msg));
 		}
