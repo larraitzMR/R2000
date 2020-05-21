@@ -11,17 +11,17 @@
 #include "oemcfg.h"
 
 
-#define OEMCFG_USBD_32BIT_LEN           40
-#define OEMCFG_USBD_16BIT_LEN           OEMCFG_USBD_32BIT_LEN * 2
-#define OEMCFGADDR_PBA_NUM_32BIT_LEN    4
+//#define OEMCFG_USBD_32BIT_LEN           40
+//#define OEMCFG_USBD_16BIT_LEN           OEMCFG_USBD_32BIT_LEN * 2
+//#define OEMCFGADDR_PBA_NUM_32BIT_LEN    4
 
 
-typedef struct
-{
-	INT8U   byteLength;
-	INT8U   usbDescriptorType;
-	INT16U  name[OEMCFG_USBD_16BIT_LEN - 1];
-} USB_STRING_DESCRIPTOR;
+//typedef struct
+//{
+//	INT8U   byteLength;
+//	INT8U   usbDescriptorType;
+//	INT16U  name[OEMCFG_USBD_16BIT_LEN - 1];
+//} USB_STRING_DESCRIPTOR;
 
 
 RFID_STATUS                 status;
