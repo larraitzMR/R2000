@@ -444,6 +444,40 @@ void getAdvancedOptions(RFID_RADIO_HANDLE handle, char inf[40])
 	sprintf(region, "%d", reg);
 	printf("region %s\n", region);
 
+	/* Moved to static decl's to avoid warnings on inititializer for algorithmSettings */
+	 RFID_18K6C_SINGULATION_FIXEDQ_PARMS             fixedQParms;
+	 RFID_18K6C_SINGULATION_DYNAMICQ_PARMS           dynamicQParms;
+	 RFID_18K6C_SINGULATION_ALGORITHM                algorithm;
+
+
+	
+
+	 /* First get the original fixedq singulation parameters and the current   */
+/* singulation algorithm selection, so they can be restored when we are   */
+/* done                                                                   */
+	 fixedQParms.length = sizeof(RFID_18K6C_SINGULATION_FIXEDQ_PARMS);
+	 status = RFID_18K6CGetSingulationAlgorithmParameters(
+		 handle,
+		 RFID_18K6C_SINGULATION_ALGORITHM_FIXEDQ,
+		 &fixedQParms);
+	 if (RFID_STATUS_OK != status)
+	 {
+		 fprintf(
+			 stderr,
+			 "ERROR: RFID_18K6CGetSingulationAlgorithmParameters returned 0x%.8x\n",
+			 status);
+	 }
+	 /* Get the current singulation algorithm        */
+	 status = RFID_18K6CGetCurrentSingulationAlgorithm(
+		 handle,
+		 &algorithm);
+
+	 printf("Current Singulation Algorithm: %s (%u)\n\n",
+		 (RFID_18K6C_SINGULATION_ALGORITHM_DYNAMICQ == algorithm) ?
+		 "Dynamic Q" : "Fixed Q", algorithm);
+
+
+	 
 	/*if (0 == oemConfig.regulatory_region)
 	{
 		regionString = "FCC";

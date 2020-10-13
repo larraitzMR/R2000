@@ -69,6 +69,7 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 
 	INT8U *byteData = (INT8U *)&inv->inv_data[0];
 	INT8U rssi = (INT8U *)&inv->rssi;
+	
 
 
 	int epcLength = 0;
@@ -83,21 +84,25 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 	memset(buf, 0, sizeof(buf));
 	memset(CRC, 0, sizeof(CRC));
 
-	printf(" PC: ");
-	saveByteArray(&byteData[0], 2, PC);
 	printf(" EPC: ");
 	saveByteArray(&byteData[2], epcLength, buf);
-	printf(" CRC: ");
-	saveByteArray(&byteData[2 + epcLength], 2, CRC);
+	if (strlen(buf) != 0) {
+		printf(" PC: ");
+		saveByteArray(&byteData[0], 2, PC);
 
-	printf(" RSSI: ");
-	sprintf(rsi, "%u", rssi);
-	printf("%s\n", rsi);
+		printf(" CRC: ");
+		saveByteArray(&byteData[2 + epcLength], 2, CRC);
 
-	sprintf(mensaje, "%s,%s,%s,%s", PC, buf, CRC, rsi);
-	send(clientRead, mensaje, sizeof(mensaje), 0);
-	memset(mensaje, 0, sizeof(mensaje));
+		printf(" RSSI: ");
+		sprintf(rsi, "%u", rssi);
+		printf("%s\n", rsi);
 
+		//sprintf(mensaje, "%s,%s,%s,%s", PC, buf, CRC, rsi);
+		sprintf(mensaje, "%s,%s", buf, rsi);
+		send(clientRead, mensaje, sizeof(mensaje), 0);
+		memset(mensaje, 0, sizeof(mensaje));
+
+	}
 	return 0;
 }
 
@@ -175,7 +180,8 @@ INT16U                                  writeData[MAX_WORD_LENGTH];
 RFID_18K6C_READ_PARMS                   readParms;
 RFID_18K6C_WRITE_PARMS                  writeParms;
 CONTEXT_PARMS                           context;
-
+char toSend[25];
+char dataHex[4];
 
 
 DWORD WINAPI readTagData(void* data) {
@@ -213,13 +219,14 @@ DWORD WINAPI readTagData(void* data) {
 				"ERROR: RFID_18K6CTagRead returned 0x%.8x\n",
 				status);
 		}
-		RFID_MacClearError(handle);
+		RFID_MacClearError(handle); 
 		accessAPIRetryCount++;
 	}
 	if (!context.succesfulAccessPackets)
 	{
 		printf("Tag access read failed\n");
 	}
+	
 
 	printf("Read Data=");
 
@@ -230,9 +237,19 @@ DWORD WINAPI readTagData(void* data) {
 		word = (((INT16U)readData[index * 2]) << 8) | readData[(index * 2) + 1];
 		printf("%04X ", word);
 		writeData[index] = ~word;
-	}
+		sprintf(dataHex, "%04X", word);
+		strcat(toSend, dataHex);
 
+	}
 	printf("\n\n");
+
+	//sprintf(toSend, "%04X", writeData);
+	//printf(toSend);
+
+	send(clientRead, toSend, sizeof(toSend), 0);
+	memset(toSend, 0, sizeof(toSend));
+	memset(dataHex, 0, sizeof(dataHex));
+
 
 	return 0;
 }
@@ -386,7 +403,7 @@ int main(
 		fprintf(stderr, "ERROR: No radios attached to the system\n");
 		free(pEnum);
 	}
-	status = RFID_RadioOpen(pEnum->ppRadioInfo[0]->cookie, &handle, 0);
+ 	status = RFID_RadioOpen(pEnum->ppRadioInfo[0]->cookie, &handle, 0);
 	if (RFID_STATUS_OK != status)
 	{
 		fprintf(stderr, "ERROR: RFID_RadioOpen returned 0x%.8x\n", status);
@@ -402,10 +419,13 @@ int main(
 
 	if ((client = accept(server, (struct sockaddr*)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
 	{
+		conectado = 1; 
+		/*
 		printf("Client connected!\n");
 		//recvfrom(client, buffer, sizeof(buffer), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);
 		retval = recv(client, buffer, sizeof(buffer), 0);
 		printf("Client says: %s\n", buffer);
+		conectado = 1;
 		if (strncmp(buffer, "CONNECT", 7) == 0)
 		{
 			conectado = 1;
@@ -413,13 +433,13 @@ int main(
 			memset(buffer, 0, sizeof(buffer));
 			send(client, "READY", 5, 0);
 		}
-		memset(buffer, 0, sizeof(buffer));
+		memset(buffer, 0, sizeof(buffer));*/
 	}
 	printf("\n");
 
 	server = configure_tcp_socket(5556);
 	if ((clientRead = accept(server, (struct sockaddr*)&clientAddrRead, &clientAddrSizeRead)) != INVALID_SOCKET)
-	{
+	{ 
 		printf("Conectado para enviar tags!\n");
 	}
 	//if (ioctlsocket(clientRead, FIONBIO, 1) != 0) {
