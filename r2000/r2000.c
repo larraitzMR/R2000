@@ -33,78 +33,6 @@ INT8U      accessAPIRetryCount = 0;
 int startReading = 0;
 SOCKET clientRead;
 
-static void saveByteArray(const INT8U *bytes, int length, char *buf)
-{
-	int index;
-	char* b;
-
-	b = malloc(sizeof(char) * (1 + 1));
-
-	for (index = 0; index < length; ++index)
-	{
-		sprintf(b, "%.2x", bytes[index]);
-		printf("%s", b);
-		strcat(buf, b);
-		memset(b, 0, sizeof(b));
-	}
-}
-
-INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, const INT8U* pBuffer, void * context)
-{
-	int *indent = (int *)context;
-	RFID_UNREFERENCED_LOCAL(handle);
-	char mensaje[40];
-	int index;
-	char buf[25];
-	char PC[5];
-	char CRC[5];
-	char b[1];
-	char rsi[4];
-
-	RFID_PACKET_COMMON *common = (RFID_PACKET_COMMON *)pBuffer;
-	INT16U packetType = MacToHost16(common->pkt_type);
-
-	RFID_PACKET_18K6C_INVENTORY *inv = (RFID_PACKET_18K6C_INVENTORY *)pBuffer;
-	int length = ((MacToHost16(common->pkt_len) - 3) * 4) - (common->flags >> 6);
-
-	INT8U *byteData = (INT8U *)&inv->inv_data[0];
-	INT8U rssi = (INT8U *)&inv->rssi;
-	
-
-
-	int epcLength = 0;
-	int tidLength = 0;
-	if (((common->flags >> 2) & 0x03) == 0x01)  /* M4 TID (12 bytes) is included in data */
-	{
-		tidLength = 12;
-	}
-	epcLength = length - tidLength - 4;  /* -4 for 16-bit PC and CRC */
-
-	memset(PC, 0, sizeof(PC));
-	memset(buf, 0, sizeof(buf));
-	memset(CRC, 0, sizeof(CRC));
-
-	printf(" EPC: ");
-	saveByteArray(&byteData[2], epcLength, buf);
-	if (strlen(buf) != 0) {
-		printf(" PC: ");
-		saveByteArray(&byteData[0], 2, PC);
-
-		printf(" CRC: ");
-		saveByteArray(&byteData[2 + epcLength], 2, CRC);
-
-		printf(" RSSI: ");
-		sprintf(rsi, "%u", rssi);
-		printf("%s\n", rsi);
-
-		//sprintf(mensaje, "%s,%s,%s,%s", PC, buf, CRC, rsi);
-		sprintf(mensaje, "%s,%s", buf, rsi);
-		send(clientRead, mensaje, sizeof(mensaje), 0);
-		memset(mensaje, 0, sizeof(mensaje));
-
-	}
-	return 0;
-}
 
 RFID_RADIO_HANDLE           handle;
 
@@ -112,36 +40,6 @@ RFID_18K6C_INVENTORY_PARMS              inventoryParms;
 INT32U                                  inventoryFlags = 0;
 int                                     indent_level = 0;
 
-
-DWORD WINAPI startRead(void* data) {
-	int status = 0;
-	char msg[20];
-	printf("HILO\n");
-	/* Set up the inventory parameters */
-	inventoryParms.length = sizeof(RFID_18K6C_INVENTORY_PARMS);
-	inventoryParms.common.tagStopCount = 0;
-	inventoryParms.common.pCallback = PacketCallbackFunction;
-	inventoryParms.common.pCallbackCode = NULL;
-	inventoryParms.common.context = &indent_level;
-
-	int index;
-
-	while (startReading == 1) {
-		//printf("START READING\n");
-		/* Attempt to perform an inventory on the radio */
-		if (RFID_STATUS_OK !=
-			(status = RFID_18K6CTagInventory(handle, &inventoryParms, inventoryFlags)))
-		{
-			//printf("RFID_18K6CTagInventory failed: RC = %d\n", status);
-		}
-	}
-	return 0;
-}
-
-DWORD WINAPI stopRead(void* data) {
-	RFID_RadioCancelOperation(handle, 0);
-	startReading = 0;
-}
 
 
 enum
@@ -182,6 +80,125 @@ RFID_18K6C_WRITE_PARMS                  writeParms;
 CONTEXT_PARMS                           context;
 char toSend[25];
 char dataHex[4];
+
+static void saveByteArray(const INT8U *bytes, int length, char *buf)
+{
+	int index;
+	char* b;
+
+	b = malloc(sizeof(char) * (1 + 1));
+
+	for (index = 0; index < length; ++index)
+	{
+		sprintf(b, "%.2x", bytes[index]);
+		printf("%s", b);
+		strcat(buf, b);
+		memset(b, 0, sizeof(b));
+	}
+}
+
+INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, const INT8U* pBuffer, void * context)
+{
+	int *indent = (int *)context;
+	RFID_UNREFERENCED_LOCAL(handle);
+	char mensaje[30];
+	int index;
+	char buf[25];
+	char PC[5];
+	char CRC[5];
+	char b[1];
+	char rsi[4];
+	char TID[25];
+
+	RFID_PACKET_COMMON *common = (RFID_PACKET_COMMON *)pBuffer;
+	INT16U packetType = MacToHost16(common->pkt_type);
+
+	RFID_PACKET_18K6C_INVENTORY *inv = (RFID_PACKET_18K6C_INVENTORY *)pBuffer;
+	int length = ((MacToHost16(common->pkt_len) - 3) * 4) - (common->flags >> 6);
+
+	INT8U *byteData = (INT8U *)&inv->inv_data[0];
+	INT8U rssi = (INT8U *)&inv->rssi;
+	//INT16U rsi = (INT16U*)& inv->rssi;
+
+	int epcLength = 0;
+	int tidLength = 0;
+	if (((common->flags >> 2) & 0x03) == 0x01)  /* M4 TID (12 bytes) is included in data */
+	{
+		tidLength = 12;
+	}
+	epcLength = length - tidLength - 4;  /* -4 for 16-bit PC and CRC */
+
+	memset(PC, 0, sizeof(PC));
+	memset(buf, 0, sizeof(buf));
+	memset(CRC, 0, sizeof(CRC));
+	memset(TID, 0, sizeof(TID));
+
+	printf(" EPC: ");
+	saveByteArray(&byteData[2], epcLength, buf);
+	if (strlen(buf) != 0) {
+		/*printf(" PC: ");
+		saveByteArray(&byteData[0], 2, PC);
+		 
+		printf(" CRC: ");
+		saveByteArray(&byteData[2 + epcLength], 2, CRC);*/
+
+		printf(" RSSI: ");
+		sprintf(rsi, "%u", rssi);
+		printf("%s\n", rsi);
+
+		/* if TID is included, print it out */ 
+		if (tidLength != 0)
+		{
+			//PrintByteArrayNoFormatting(&byteData[4 + epcLength], tidLength, ",", NULL); /* +4 to get past PC and CRC */
+			printf(" TID: ");
+			saveByteArray(&byteData[4 + epcLength], &byteData[4 + epcLength], TID);
+			printf("%s\n", TID);
+		}
+		printf("\n");
+
+		
+
+		//sprintf(mensaje, "%s,%s,%s,%s", PC, buf, CRC, rsi);
+		sprintf(mensaje, "$%s,%s\n", buf, rsi);
+		send(clientRead, mensaje, sizeof(mensaje), 0);
+		memset(mensaje, 0, sizeof(mensaje));
+
+	}
+	return 0;
+}
+
+
+DWORD WINAPI startRead(void* data) {
+	int status = 0;
+	char msg[20];
+	printf("HILO\n");
+	/* Set up the inventory parameters */
+	inventoryParms.length = sizeof(RFID_18K6C_INVENTORY_PARMS);
+	inventoryParms.common.tagStopCount = 0;
+	inventoryParms.common.pCallback = PacketCallbackFunction;
+	inventoryParms.common.pCallbackCode = NULL;
+	inventoryParms.common.context = &indent_level;
+
+	int index;
+
+	while (startReading == 1) {
+		//printf("START READING\n");
+		/* Attempt to perform an inventory on the radio */
+		if (RFID_STATUS_OK !=
+			(status = RFID_18K6CTagInventory(handle, &inventoryParms, inventoryFlags)))
+		{
+			//printf("RFID_18K6CTagInventory failed: RC = %d\n", status);
+		}
+	}
+	return 0;
+}
+
+DWORD WINAPI stopRead(void* data) {
+	RFID_RadioCancelOperation(handle, 0);
+	startReading = 0;
+}
+
+
 
 
 DWORD WINAPI readTagData(void* data) {
