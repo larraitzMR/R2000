@@ -7,7 +7,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-//#include <pthread.h>
+ //#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <WinSock2.h>
@@ -81,7 +81,7 @@ CONTEXT_PARMS                           context;
 char toSend[25];
 char dataHex[4];
 
-static void saveByteArray(const INT8U *bytes, int length, char *buf)
+static void saveByteArray(const INT8U* bytes, int length, char* buf)
 {
 	int index;
 	char* b;
@@ -91,15 +91,15 @@ static void saveByteArray(const INT8U *bytes, int length, char *buf)
 	for (index = 0; index < length; ++index)
 	{
 		sprintf(b, "%.2x", bytes[index]);
-		printf("%s", b);
+		//printf("%s", b);
 		strcat(buf, b);
 		memset(b, 0, sizeof(b));
 	}
 }
 
-INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, const INT8U* pBuffer, void * context)
+INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, const INT8U* pBuffer, void* context)
 {
-	int *indent = (int *)context;
+	int* indent = (int*)context;
 	RFID_UNREFERENCED_LOCAL(handle);
 	char mensaje[30];
 	int index;
@@ -110,23 +110,23 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 	char rsi[4];
 	char TID[25];
 
-	RFID_PACKET_COMMON *common = (RFID_PACKET_COMMON *)pBuffer;
+	RFID_PACKET_COMMON* common = (RFID_PACKET_COMMON*)pBuffer;
 	INT16U packetType = MacToHost16(common->pkt_type);
 
-	RFID_PACKET_18K6C_INVENTORY *inv = (RFID_PACKET_18K6C_INVENTORY *)pBuffer;
+	RFID_PACKET_18K6C_INVENTORY* inv = (RFID_PACKET_18K6C_INVENTORY*)pBuffer;
 	int length = ((MacToHost16(common->pkt_len) - 3) * 4) - (common->flags >> 6);
 
-	INT8U *byteData = (INT8U *)&inv->inv_data[0];
+	INT8U* byteData = (INT8U*)& inv->inv_data[0];
 	INT16U ri = (INT8U*)& inv->rssi;
-	
-	
+
+
 	//INT16U rsi = (INT16U*)& inv->rssi;
-	INT8 rs = (INT8 *)& inv->rssi;
+	INT8 rs = (INT8*)& inv->rssi;
 
 
 	INT8U rssi = (INT8U*)& inv->rssi;
 
-	printf(" %u, %u, %u\n", &inv->rssi, ri, rs);
+	//	printf(" %u, %u, %u\n", &inv->rssi, ri, rs);
 
 	int epcLength = 0;
 	int tidLength = 0;
@@ -140,22 +140,22 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 	memset(buf, 0, sizeof(buf));
 	memset(CRC, 0, sizeof(CRC));
 	memset(TID, 0, sizeof(TID));
-	
 
-	printf(" EPC: ");
+
+	//printf(" EPC: ");
 	saveByteArray(&byteData[2], epcLength, buf);
 	if (strlen(buf) != 0) {
 		/*printf(" PC: ");
 		saveByteArray(&byteData[0], 2, PC);
-		 
+
 		printf(" CRC: ");
 		saveByteArray(&byteData[2 + epcLength], 2, CRC);*/
 
-		printf(" RSSI: ");
+		//printf(" RSSI: ");
 		sprintf(rsi, "%u", rssi);
-		printf("%s\n", rsi);
+		//printf("%s\n", rsi);
 
-		/* if TID is included, print it out */ 
+		/* if TID is included, print it out */
 		if (tidLength != 0)
 		{
 			//PrintByteArrayNoFormatting(&byteData[4 + epcLength], tidLength, ",", NULL); /* +4 to get past PC and CRC */
@@ -165,7 +165,7 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 		}
 		printf("\n");
 
-		
+
 
 		//sprintf(mensaje, "%s,%s,%s,%s", PC, buf, CRC, rsi);
 		sprintf(mensaje, "$%s,%s\n", buf, rsi);
@@ -245,14 +245,14 @@ DWORD WINAPI readTagData(void* data) {
 				"ERROR: RFID_18K6CTagRead returned 0x%.8x\n",
 				status);
 		}
-		RFID_MacClearError(handle); 
+		RFID_MacClearError(handle);
 		accessAPIRetryCount++;
 	}
 	if (!context.succesfulAccessPackets)
 	{
 		printf("Tag access read failed\n");
 	}
-	
+
 
 	printf("Read Data=");
 
@@ -330,14 +330,14 @@ DWORD WINAPI writeTagData(void* data) {
 
 int main(
 	int     argc,
-	char**  argv
+	char** argv
 )
 {
 	RFID_STATUS                 status;
-	RFID_RADIO_ENUM*            pEnum;
+	RFID_RADIO_ENUM* pEnum;
 
 	RFID_RADIO_POWER_STATE		pstate;
-	RFID_RADIO_INFO*			pInfo;
+	RFID_RADIO_INFO* pInfo;
 	INT32U                      index;
 	INT32U                      antenna;
 	RFID_VERSION				version;
@@ -352,8 +352,8 @@ int main(
 
 	RFID_RADIO_POWER_STATE      pradio;
 
-	RFID_MAC_REGION*			pRegion;
-	void*						pRegionConfig;
+	RFID_MAC_REGION* pRegion;
+	void* pRegionConfig;
 
 
 	RFID_UNREFERENCED_LOCAL(argc);
@@ -387,7 +387,7 @@ int main(
 
 	/* Create an initial structure for enumerating the radios.  We'll adjust  */
 	/* it once we know how big to make it.                                    */
-	pEnum = (RFID_RADIO_ENUM *)malloc(sizeof(RFID_RADIO_ENUM));
+	pEnum = (RFID_RADIO_ENUM*)malloc(sizeof(RFID_RADIO_ENUM));
 	if (NULL == pEnum)
 	{
 		fprintf(stderr, "ERROR: Failed to allocate memory\n");
@@ -401,7 +401,7 @@ int main(
 		(status = RFID_RetrieveAttachedRadiosList(pEnum, 0)))
 	{
 		RFID_RADIO_ENUM* pNewEnum =
-			(RFID_RADIO_ENUM *)realloc(pEnum, pEnum->totalLength);
+			(RFID_RADIO_ENUM*)realloc(pEnum, pEnum->totalLength);
 		if (NULL == pNewEnum)
 		{
 			fprintf(stderr, "ERROR: Failed to allocate memory\n");
@@ -431,7 +431,7 @@ int main(
 		fprintf(stderr, "ERROR: No radios attached to the system\n");
 		free(pEnum);
 	}
- 	status = RFID_RadioOpen(pEnum->ppRadioInfo[0]->cookie, &handle, 0);
+	status = RFID_RadioOpen(pEnum->ppRadioInfo[0]->cookie, &handle, 0);
 	if (RFID_STATUS_OK != status)
 	{
 		fprintf(stderr, "ERROR: RFID_RadioOpen returned 0x%.8x\n", status);
@@ -441,236 +441,227 @@ int main(
 	RFID_STATUS RFID_RadioSetImpinjExtensions(handle, pExtensions);
 
 
-
 	/* COMUNICACIÓN SOCKET CON EL SOFTWARE MYRUNS */
 	server = configure_tcp_socket(5557);
 
-	if ((client = accept(server, (struct sockaddr*)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
+	if ((client = accept(server, (struct sockaddr*) & clientAddr, &clientAddrSize)) != INVALID_SOCKET)
 	{
-		conectado = 1; 
-		/*
-		printf("Client connected!\n");
-		//recvfrom(client, buffer, sizeof(buffer), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);
-		retval = recv(client, buffer, sizeof(buffer), 0);
-		printf("Client says: %s\n", buffer);
 		conectado = 1;
-		if (strncmp(buffer, "CONNECT", 7) == 0)
+		printf("CONECTADO AL READER\n");
+	}
+
+	while (conectado == 1) {
+		//printf("while\n");
+		/*retval = recvfrom(client, msg, sizeof(msg), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);*/
+		retval = recv(client, msg, sizeof(msg), MSG_WAITALL);
+		//buscar #
+		char* mens = strtok(msg, "#");
+		sprintf(msg, "%s", mens);
+
+		//printf("msg: %s\n", msg);
+		if (strncmp(msg, "DISCONNECT", 10) == 0) {
+			printf("msg: %s\n", msg);
+			conectado = 0;
+			send(client, "OK#", 3, 0);
+		}
+		if (strncmp(msg, "POWER_MINMAX", 12) == 0)
 		{
-			conectado = 1;
-			printf("CONECTADO AL READER\n");
-			memset(buffer, 0, sizeof(buffer));
-			send(client, "READY", 5, 0);
+			printf("msg: %s\n", msg);
 		}
-		memset(buffer, 0, sizeof(buffer));*/
-	}
-	printf("\n");
-
-	server = configure_tcp_socket(5556);
-	if ((clientRead = accept(server, (struct sockaddr*)&clientAddrRead, &clientAddrSizeRead)) != INVALID_SOCKET)
-	{ 
-		printf("Conectado para enviar tags!\n");
-	}
-	//if (ioctlsocket(clientRead, FIONBIO, 1) != 0) {
-	//	printf("Non blocking error !\n");
-	//}
-	printf("\n");
-
-	server = configure_tcp_socket(5558);
-	if ((client = accept(server, (struct sockaddr*)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
-	{
-		printf("Client connected!\n");
-		preparado = 1;
-	}
-
-	printf("\n");
-
-	if (conectado == 1 && preparado == 1)
-	{
-	//	setAntennaPower(handle, 5.0);
-		while (conectado == 1) {
-			/*retval = recvfrom(client, msg, sizeof(msg), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);*/
-			retval = recv(client, msg, sizeof(msg), 0);
-
+		else if (strncmp(msg, "GET_POWER", 9) == 0) {
+			printf("msg: %s\n", msg);
+			char pow[6] = "";
+			power = getAntennaPower(handle);
+			printf("ENVIADO POWER: %.1f\n", power);
+			//itoa(power, pow, 10);
+			sprintf(pow, "%.1f#", power);
+			//string str = string(intStr);
+			//printf("POW: %s\n", pow);
+			send(client, pow, sizeof(pow), 0);
+		}
+		else if (strncmp(msg, "SET_POWER", 9) == 0) {
+			printf("msg: %s\n", msg);
+			int longitud = strlen(msg) - 9;
+			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+			nuevo[longitud] = '\0';
+			strncpy(nuevo, msg + 9, longitud);
+			//printf("NUEVO: %s\n", nuevo);
+			double value = atof(nuevo);
+			printf("RECIBIDO POWER: %.1f\n", value);
+			setAntennaPower(handle, value);
+			send(client, "OK#", 3, 0);
+		}
+		else if (strcmp(msg, "ANT_PORTS") == 0) {
 			//printf("msg: %s\n", msg);
-			if (strncmp(msg, "DISCONNECT", 10) == 0) {
-				printf("msg: %s\n", msg);
-				conectado = 0;
-			}
-			if (strncmp(msg, "POWER_MINMAX", 12) == 0)
-			{
-				printf("msg: %s\n", msg);
-			}
-			else if (strncmp(msg, "GET_POWER", 9) == 0) {
-				printf("msg: %s\n", msg);
-				char pow[6] = "";
-				power = getAntennaPower(handle);
-				printf("ENVIADO POWER: %.1f\n", power);
-				//itoa(power, pow, 10);
-				sprintf(pow, "%.1f", power);
-				//string str = string(intStr);
-				//printf("POW: %s\n", pow);
-				send(client, pow, sizeof(pow), 0);
-			}
-			else if (strncmp(msg, "SET_POWER", 9) == 0) {
-				printf("msg: %s\n", msg);
-				int longitud = strlen(msg) - 9;
-				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-				nuevo[longitud] = '\0';
-				strncpy(nuevo, msg + 9, longitud);
-				//printf("NUEVO: %s\n", nuevo);
-				double value = atof(nuevo);
-				printf("RECIBIDO POWER: %.1f\n", value);
-				setAntennaPower(handle, value);
-			}
-			else if (strcmp(msg, "ANT_PORTS") == 0) {
-				//printf("msg: %s\n", msg);
-			}
-			else if (strncmp(msg, "CON_ANT_PORTS", 13) == 0) {
-				//que antenas estan enabled
-				printf("msg: %s\n", msg);
-				char selAnt[4];
-				getConnectedAntennaPorts(handle, selAnt);
-				send(client, selAnt, 4, 0);
-			}
-			else if (strncmp(msg, "GET_SEL_ANT", 11) == 0) {
-				printf("msg: %s\n", msg);
-				int *selAnt[4];
-				getConnectedAntennaPorts(handle, selAnt);
-				//printf("%s", selAnt);
-				send(client, selAnt, 4, 0);
-			}
-			else if (strncmp(msg, "SET_SEL_ANT", 11) == 0) {
-				printf("msg: %s\n", msg);
-				char *nuevoDato;
-				int longitud = strlen(msg) - 11;
-				nuevoDato = (char*)malloc(sizeof(char) * (longitud + 1));
-				nuevoDato[longitud] = '\0';
-				strncpy(nuevoDato, msg + 11, longitud);
-				printf("CONECTADAS: %s\n", nuevoDato);
-				setSelectedAntena(handle, nuevoDato);
-			}
-			else if (strncmp(msg, "GET_INFO", 8) == 0) {
-				printf("msg: %s\n", msg);
-				char info[9];
-				getReaderInfo(handle, info);
-				send(client, info, sizeof(info), 0);
-				memset(info, 0, sizeof(info));
-			}
-			else if (strncmp(msg, "GET_ADV_OPT", 11) == 0) {
-				printf("msg: %s\n", msg);
-				char option[7];
-
-				getAdvancedOptions(handle, option);
-				send(client, option, sizeof(option), 0);
-				memset(option, 0, sizeof(option));
-			}
-			else if (strncmp(msg, "SET_REGION", 10) == 0) {
-				printf("msg: %s\n", msg);
-				int longitud = strlen(msg) - 11;
-				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-				nuevo[longitud] = '\0';
-				strncpy(nuevo, msg + 11, longitud);
-				printf("REGION: %s\n", nuevo);
-				fflush(stdout);
-
-				setAdvancedOptions(handle, "SET_REGION", nuevo);
-			}
-			else if (strncmp(msg, "SET_TARI", 8) == 0) {
-				printf("msg: %s\n", msg);
-				int longitud = strlen(msg) - 9;
-				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-				nuevo[longitud] = '\0';
-				strncpy(nuevo, msg + 9, longitud);
-				printf("SET TARI: %s\n", nuevo);
-				fflush(stdout);
-				setAdvancedOptions(handle, "SET_TARI", nuevo);
-
-			}
-			else if (strncmp(msg, "SET_BLF", 7) == 0) {
-				printf("msg: %s\n", msg);
-				int longitud = strlen(msg) - 8;
-				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-				nuevo[longitud] = '\0';
-				strncpy(nuevo, msg + 8, longitud);
-				printf("SET BLF: %s\n", nuevo);
-				fflush(stdout);
-				setAdvancedOptions(handle, "SET_BLF", nuevo);
-			}
-			else if (strncmp(msg, "SET_M", 5) == 0) {
-				printf("msg: %s\n", msg);
-				int longitud = strlen(msg) - 6;
-				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-				nuevo[longitud] = '\0';
-				strncpy(nuevo, msg + 6, longitud);
-				printf("SET M: %s\n", nuevo);
-				fflush(stdout);
-				setAdvancedOptions(handle, "SET_M", nuevo);
-			}
-			else if (strncmp(msg, "SET_Q", 5) == 0) {
-				printf("msg: %s\n", msg);
-				setAdvancedOptions(handle, "SET_Q", nuevo);
-
-			}
-			else if (strncmp(msg, "SET_SESSION", 11) == 0) {
-				printf("msg: %s\n", msg);
-				int longitud = strlen(msg) - 12;
-				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-				nuevo[longitud] = '\0';
-				strncpy(nuevo, msg + 12, longitud);
-				printf("SESION: %s\n", nuevo);
-				fflush(stdout);
-				setAdvancedOptions(handle, "SET_SESSION", nuevo);
-			}
-			else if (strncmp(msg, "SET_TARGET", 10) == 0) {
-				printf("msg: %s\n", msg);
-				int longitud = strlen(msg) - 11;
-				char *nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-				nuevo[longitud] = '\0';
-				strncpy(nuevo, msg + 11, longitud);
-				printf("SET TARGET: %s\n", nuevo);
-				fflush(stdout);
-				setAdvancedOptions(handle, "SET_TARGET", nuevo);
-			}
-			else if (strncmp(msg, "START_READING", 13) == 0) {
-				printf("msg: %s\n", msg);
-				HANDLE thread = CreateThread(NULL, 0, startRead, clientRead, 0, NULL);
-				startReading = 1;
-
-			}
-			else if (strncmp(msg, "STOP_READING", 13) == 0) {
-				printf("msg: %s\n", msg);
-				HANDLE thread = CreateThread(NULL, 0, stopRead, clientRead, 0, NULL);
-				//startReading = 0;
-				//CloseHandle(hilo);
-			}
-			else if (strncmp(msg, "READ_INFO", 9) == 0) {
-				printf("msg: %s\n", msg);
-				HANDLE thread = CreateThread(NULL, 0, readTagData, clientRead, 0, NULL);
-				startReading = 1;
-			}
-			else if (strncmp(msg, "WRITE_EPC", 9) == 0) {
-				printf("msg: %s\n", msg);
-				char* token;
-				int i = 0;
-
-				/* get the first token */
-				token = strtok(msg, " ");
-
-				/* walk through other tokens */
-				while (token != NULL) {
-					printf(" %s\n", token);
-					strcpy(write[i], token);
-					token = strtok(NULL, " ");
-					i++;
-				}
-				startReading = 0;
-				HANDLE thread = CreateThread(NULL, 0, writeTagData, clientRead, 0, NULL);
-				/*pthread_t tid;
-				pthread_create(&tid, NULL, hello, "hello world");
-				pthread_join(tid, NULL); */
-			}
-			memset(msg, 0, sizeof(msg));
 		}
+		else if (strncmp(msg, "CON_ANT_PORTS", 13) == 0) {
+			//que antenas estan enabled
+			printf("msg: %s\n", msg);
+			char selAnt[4];
+			char selAntSend[5];
+			getConnectedAntennaPorts(handle, selAnt);
+			sprintf(selAntSend, "%s#", selAnt);
+			send(client, selAntSend, 4, 0);
+		}
+		else if (strncmp(msg, "GET_SEL_ANT", 11) == 0) {
+			printf("msg: %s\n", msg);
+			int* selAnt[4];
+			char selAntSend[5];
+			getConnectedAntennaPorts(handle, selAnt);
+			//printf("%s", selAnt);
+			sprintf(selAntSend, "%s#", selAnt);
+			send(client, selAntSend, 5, 0);
+		}
+		else if (strncmp(msg, "SET_SEL_ANT", 11) == 0) {
+			printf("msg: %s\n", msg);
+			char* nuevoDato;
+			int longitud = strlen(msg) - 11;
+			nuevoDato = (char*)malloc(sizeof(char) * (longitud + 1));
+			nuevoDato[longitud] = '\0';
+			strncpy(nuevoDato, msg + 11, longitud);
+			printf("CONECTADAS: %s\n", nuevoDato);
+			setSelectedAntena(handle, nuevoDato);
+			send(client, "OK#", 3, 0);
+		}
+		else if (strncmp(msg, "GET_INFO", 8) == 0) {
+			printf("msg: %s\n", msg);
+			char info[9];
+			char infoSend[10];
+			getReaderInfo(handle, info);
+			sprintf(infoSend, "%s#", info);
+			send(client, infoSend, sizeof(infoSend), 0);
+			memset(info, 0, sizeof(info));
+			memset(infoSend, 0, sizeof(infoSend));
+		}
+		else if (strncmp(msg, "GET_ADV_OPT", 11) == 0) {
+			printf("msg: %s\n", msg);
+			char option[7];
+			char optionSend[8];
+			getAdvancedOptions(handle, option);
+			sprintf(optionSend, "%s#", option);
+			send(client, optionSend, sizeof(optionSend), 0);
+			memset(option, 0, sizeof(option));
+			memset(optionSend, 0, sizeof(optionSend));
+		}
+		else if (strncmp(msg, "SET_REGION", 10) == 0) {
+			printf("msg: %s\n", msg);
+			int longitud = strlen(msg) - 11;
+			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+			nuevo[longitud] = '\0';
+			strncpy(nuevo, msg + 11, longitud);
+			printf("REGION: %s\n", nuevo);
+			fflush(stdout);
+
+			setAdvancedOptions(handle, "SET_REGION", nuevo);
+			send(client, "OK#", 3, 0);
+		}
+		else if (strncmp(msg, "SET_TARI", 8) == 0) {
+			printf("msg: %s\n", msg);
+			int longitud = strlen(msg) - 9;
+			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+			nuevo[longitud] = '\0';
+			strncpy(nuevo, msg + 9, longitud);
+			printf("SET TARI: %s\n", nuevo);
+			fflush(stdout);
+			setAdvancedOptions(handle, "SET_TARI", nuevo);
+			send(client, "OK#", 3, 0);
+
+		}
+		else if (strncmp(msg, "SET_BLF", 7) == 0) {
+			printf("msg: %s\n", msg);
+			int longitud = strlen(msg) - 8;
+			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+			nuevo[longitud] = '\0';
+			strncpy(nuevo, msg + 8, longitud);
+			printf("SET BLF: %s\n", nuevo);
+			fflush(stdout);
+			setAdvancedOptions(handle, "SET_BLF", nuevo);
+			send(client, "OK#", 3, 0);
+		}
+		else if (strncmp(msg, "SET_M", 5) == 0) {
+			printf("msg: %s\n", msg);
+			int longitud = strlen(msg) - 6;
+			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+			nuevo[longitud] = '\0';
+			strncpy(nuevo, msg + 6, longitud);
+			printf("SET M: %s\n", nuevo);
+			fflush(stdout);
+			setAdvancedOptions(handle, "SET_M", nuevo);
+			send(client, "OK#", 3, 0);
+		}
+		else if (strncmp(msg, "SET_Q", 5) == 0) {
+			printf("msg: %s\n", msg);
+			setAdvancedOptions(handle, "SET_Q", nuevo);
+			send(client, "OK#", 3, 0);
+
+		}
+		else if (strncmp(msg, "SET_SESSION", 11) == 0) {
+			printf("msg: %s\n", msg);
+			int longitud = strlen(msg) - 12;
+			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+			nuevo[longitud] = '\0';
+			strncpy(nuevo, msg + 12, longitud);
+			printf("SESION: %s\n", nuevo);
+			fflush(stdout);
+			setAdvancedOptions(handle, "SET_SESSION", nuevo);
+			send(client, "OK#", 3, 0);
+		}
+		else if (strncmp(msg, "SET_TARGET", 10) == 0) {
+			printf("msg: %s\n", msg);
+			int longitud = strlen(msg) - 11;
+			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
+			nuevo[longitud] = '\0';
+			strncpy(nuevo, msg + 11, longitud);
+			printf("SET TARGET: %s\n", nuevo);
+			fflush(stdout);
+			setAdvancedOptions(handle, "SET_TARGET", nuevo);
+			send(client, "OK#", 3, 0);
+		}
+		else if (strncmp(msg, "START_READING", 13) == 0) {
+			printf("msg: %s\n", msg);
+			HANDLE thread = CreateThread(NULL, 0, startRead, clientRead, 0, NULL);
+			startReading = 1;
+			send(client, "OK#", 3, 0);
+
+		}
+		else if (strncmp(msg, "STOP_READING", 13) == 0) {
+			printf("msg: %s\n", msg);
+			HANDLE thread = CreateThread(NULL, 0, stopRead, clientRead, 0, NULL);
+			send(client, "OK#", 3, 0);
+			//startReading = 0;
+			//CloseHandle(hilo);
+		}
+		else if (strncmp(msg, "READ_INFO", 9) == 0) {
+			printf("msg: %s\n", msg);
+			HANDLE thread = CreateThread(NULL, 0, readTagData, clientRead, 0, NULL);
+			startReading = 1;
+			send(client, "OK#", 3, 0);
+		}
+		else if (strncmp(msg, "WRITE_EPC", 9) == 0) {
+			printf("msg: %s\n", msg);
+			char* token;
+			int i = 0;
+
+			/* get the first token */
+			token = strtok(msg, " ");
+
+			/* walk through other tokens */
+			while (token != NULL) {
+				printf(" %s\n", token);
+				strcpy(write[i], token);
+				token = strtok(NULL, " ");
+				i++;
+			}
+			startReading = 0;
+			HANDLE thread = CreateThread(NULL, 0, writeTagData, clientRead, 0, NULL);
+			/*pthread_t tid;
+			pthread_create(&tid, NULL, hello, "hello world");
+			pthread_join(tid, NULL); */
+			send(client, "OK#", 3, 0);
+		}
+		memset(msg, 0, sizeof(msg));
+		//memset(mens, 0, sizeof(mens));
+
 
 		closesocket(client);
 		//closesocket(client2);

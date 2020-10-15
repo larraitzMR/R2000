@@ -1,7 +1,38 @@
-﻿  reader_params.c
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(125,14): warning C4244:  'return': conversión de 'double' a 'int'; posible pérdida de datos
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(151,1): warning C4244:  'inicializando': conversión de 'double' a 'int'; posible pérdida de datos
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(351,7): warning C4101:  'version': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(449,51): warning C4101:  'dynamicQParms': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(449,51): warning C4101: C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(159) : warning C4715: 'setAntennaPower': no todas las rutas de acceso de control devuelven un valor
+﻿  r2000.c
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(163,68): warning C4047:  'función': 'int' es distinto en los niveles de direccionamiento indirecto de 'INT8U *'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(163,68): warning C4024:  'saveByteArray': tipos distintos para el parámetro formal y el parámetro real 2
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(120,1): warning C4047:  'inicializando': 'INT16U' es distinto en los niveles de direccionamiento indirecto de 'INT8U *'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(124,1): warning C4047:  'inicializando': 'INT8' es distinto en los niveles de direccionamiento indirecto de 'INT8 *'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(127,1): warning C4047:  'inicializando': 'INT8U' es distinto en los niveles de direccionamiento indirecto de 'INT8U *'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(109,7): warning C4101:  'b': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(105,6): warning C4101:  'index': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(182,7): warning C4101:  'msg': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(191,6): warning C4101:  'index': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(285,10): warning C4101:  'index': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(286,10): warning C4101:  'word': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(554,44): warning C4047:  'función': 'char *' es distinto en los niveles de direccionamiento indirecto de 'int *[4]'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(554,44): warning C4024:  'getConnectedAntennaPorts': tipos distintos para el parámetro formal y el parámetro real 2
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(556,25): warning C4477:  'sprintf' : la cadena de formato '%s' requiere un argumento de tipo 'char *', pero el argumento variádico 1 tiene el tipo 'int **'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(567,22): warning C4013:  'setSelectedAntena' sin definir; se supone que extern devuelve como resultado int
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(638,46): warning C4047:  'función': 'char *' es distinto en los niveles de direccionamiento indirecto de 'char *[20]'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(638,46): warning C4024:  'setAdvancedOptions': tipos distintos para el parámetro formal y el parámetro real 3
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(666,64): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(673,63): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(680,66): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(700,67): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(342,30): warning C4101:  'antenna': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(351,27): warning C4101:  'linkProfile': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(339,26): warning C4101:  'pstate': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(355,21): warning C4101:  'pRegion': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(350,28): warning C4101:  'pmode': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(346,13): warning C4101:  'antennaPort': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(363,10): warning C4101:  'WSAData': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(341,30): warning C4101:  'index': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(347,24): warning C4101:  'pGroup': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(353,30): warning C4101:  'pradio': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(345,30): warning C4101:  'antennaConfig': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(344,30): warning C4101:  'antennaStatus': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(367,7): warning C4101:  'buffer': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(356,13): warning C4101:  'pRegionConfig': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(356,13): warning C4101: C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(208) : warning C4716: 'stopRead': debe devolver un valor
   r2000.vcxproj -> C:\Users\Propietario\Documents\GitHub\R2000\Debug\r2000.exe
