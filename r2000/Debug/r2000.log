@@ -1,7 +1,7 @@
 ﻿  reader_params.c
 C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(125,14): warning C4244:  'return': conversión de 'double' a 'int'; posible pérdida de datos
 C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(151,1): warning C4244:  'inicializando': conversión de 'double' a 'int'; posible pérdida de datos
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(357,7): warning C4101:  'version': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(455,51): warning C4101:  'dynamicQParms': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(455,51): warning C4101: C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(159) : warning C4715: 'setAntennaPower': no todas las rutas de acceso de control devuelven un valor
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(369,7): warning C4101:  'version': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(467,51): warning C4101:  'dynamicQParms': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(467,51): warning C4101: C:\Users\Propietario\Documents\GitHub\R2000\r2000\reader_params.c(159) : warning C4715: 'setAntennaPower': no todas las rutas de acceso de control devuelven un valor
   r2000.vcxproj -> C:\Users\Propietario\Documents\GitHub\R2000\Debug\r2000.exe

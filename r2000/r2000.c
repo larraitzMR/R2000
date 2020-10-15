@@ -483,12 +483,8 @@ int main(
 			char pow[6] = "";
 			power = getAntennaPower(handle);
 			printf("ENVIADO POWER: %.1f\n", power);
-			//itoa(power, pow, 10);
 			sprintf(pow, "%.1f#", power);
-			//string str = string(intStr);
-			//printf("POW: %s\n", pow);
 			send(client, pow, sizeof(pow), 0);
-			//printf("POWER SEND DONE");
 		}
 		else if (strncmp(msg, "SET_POWER", 9) == 0) {
 			printf("msg: %s\n", msg);
@@ -523,20 +519,22 @@ int main(
 			//printf("%s", selAnt);
 			//send(client, strcat(selAnt, "#"), 5, 0);
 			
-			//selAnt[strlen(selAnt)] = '#';
-			//send(client, selAnt, strlen(selAnt), 0);
-			send(client, "12#", 3, 0);
+			selAnt[strlen(selAnt)] = '#';
+			send(client, selAnt, strlen(selAnt), 0);
+			//send(client, "12#", 3, 0);
 		
 		}
 		else if (strncmp(msg, "SET_SEL_ANT", 11) == 0) {
 			printf("msg: %s\n", msg);
-			char* mens = strtok(msg, " ");
-			char* ant = strtok(NULL, "");
 			//char* nuevoDato;
 			//int longitud = strlen(msg) - 11;
 			//nuevoDato = (char*)malloc(sizeof(char) * (longitud + 1));
 			//nuevoDato[longitud] = '\0';
 			//strncpy(nuevoDato, msg + 11, longitud);
+			//printf("CONECTADAS: %s\n", nuevoDato);
+
+			char* mens = strtok(msg, " ");
+			char* ant = strtok(NULL, "");
 			printf("CONECTADAS: %s\n", ant);
 			setSelectedAntena(handle, ant);
 			send(client, "OK#", 3, 0);
@@ -563,11 +561,9 @@ int main(
 		}
 		else if (strncmp(msg, "SET_REGION", 10) == 0) {
 			printf("msg: %s\n", msg);
-			int longitud = strlen(msg) - 11;
-			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-			nuevo[longitud] = '\0';
-			strncpy(nuevo, msg + 11, longitud);
-			printf("REGION: %s\n", nuevo);
+			char* mens = strtok(msg, " ");
+			char* reg = strtok(NULL, "");
+			printf("REGION: %s\n", reg);
 			fflush(stdout);
 
 			setAdvancedOptions(handle, "SET_REGION", nuevo);
@@ -575,64 +571,54 @@ int main(
 		}
 		else if (strncmp(msg, "SET_TARI", 8) == 0) {
 			printf("msg: %s\n", msg);
-			int longitud = strlen(msg) - 9;
-			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-			nuevo[longitud] = '\0';
-			strncpy(nuevo, msg + 9, longitud);
-			printf("SET TARI: %s\n", nuevo);
+			char* mens = strtok(msg, " ");
+			char* tari = strtok(NULL, "");
+			printf("SET TARI: %s\n", tari);
 			fflush(stdout);
-			setAdvancedOptions(handle, "SET_TARI", nuevo);
+			setAdvancedOptions(handle, "SET_TARI", tari);
 			send(client, "OK#", 3, 0);
 
 		}
 		else if (strncmp(msg, "SET_BLF", 7) == 0) {
 			printf("msg: %s\n", msg);
-			int longitud = strlen(msg) - 8;
-			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-			nuevo[longitud] = '\0';
-			strncpy(nuevo, msg + 8, longitud);
-			printf("SET BLF: %s\n", nuevo);
+			char* mens = strtok(msg, " ");
+			char* blf = strtok(NULL, "");
+			printf("SET BLF: %s\n", blf);
 			fflush(stdout);
-			setAdvancedOptions(handle, "SET_BLF", nuevo);
+			setAdvancedOptions(handle, "SET_BLF", blf);
 			send(client, "OK#", 3, 0);
 		}
 		else if (strncmp(msg, "SET_M", 5) == 0) {
 			printf("msg: %s\n", msg);
-			int longitud = strlen(msg) - 6;
-			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-			nuevo[longitud] = '\0';
-			strncpy(nuevo, msg + 6, longitud);
-			printf("SET M: %s\n", nuevo);
+			char* mens = strtok(msg, " ");
+			char* m = strtok(NULL, "");
+			printf("SET M: %s\n", m);
 			fflush(stdout);
-			setAdvancedOptions(handle, "SET_M", nuevo);
+			setAdvancedOptions(handle, "SET_M", m);
 			send(client, "OK#", 3, 0);
 		}
 		else if (strncmp(msg, "SET_Q", 5) == 0) {
 			printf("msg: %s\n", msg);
-			setAdvancedOptions(handle, "SET_Q", nuevo);
+			//setAdvancedOptions(handle, "SET_Q", nuevo);
 			send(client, "OK#", 3, 0);
 
 		}
 		else if (strncmp(msg, "SET_SESSION", 11) == 0) {
 			printf("msg: %s\n", msg);
-			int longitud = strlen(msg) - 12;
-			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-			nuevo[longitud] = '\0';
-			strncpy(nuevo, msg + 12, longitud);
-			printf("SESION: %s\n", nuevo);
+			char* mens = strtok(msg, " ");
+			char* session = strtok(NULL, "");
+			printf("SESION: %s\n", session);
 			fflush(stdout);
-			setAdvancedOptions(handle, "SET_SESSION", nuevo);
+			setAdvancedOptions(handle, "SET_SESSION", session);
 			send(client, "OK#", 3, 0);
 		}
 		else if (strncmp(msg, "SET_TARGET", 10) == 0) {
 			printf("msg: %s\n", msg);
-			int longitud = strlen(msg) - 11;
-			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-			nuevo[longitud] = '\0';
-			strncpy(nuevo, msg + 11, longitud);
-			printf("SET TARGET: %s\n", nuevo);
+			char* mens = strtok(msg, " ");
+			char* target = strtok(NULL, "");
+			printf("SET TARGET: %s\n", target);
 			fflush(stdout);
-			setAdvancedOptions(handle, "SET_TARGET", nuevo);
+			setAdvancedOptions(handle, "SET_TARGET", target);
 			send(client, "OK#", 3, 0);
 		}
 		else if (strncmp(msg, "START_READING", 13) == 0) {
