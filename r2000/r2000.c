@@ -117,8 +117,16 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 	int length = ((MacToHost16(common->pkt_len) - 3) * 4) - (common->flags >> 6);
 
 	INT8U *byteData = (INT8U *)&inv->inv_data[0];
-	INT8U rssi = (INT8U *)&inv->rssi;
+	INT16U ri = (INT8U*)& inv->rssi;
+	
+	
 	//INT16U rsi = (INT16U*)& inv->rssi;
+	INT8 rs = (INT8 *)& inv->rssi;
+
+
+	INT8U rssi = (INT8U*)& inv->rssi;
+
+	printf(" %u, %u, %u\n", &inv->rssi, ri, rs);
 
 	int epcLength = 0;
 	int tidLength = 0;
@@ -132,6 +140,7 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 	memset(buf, 0, sizeof(buf));
 	memset(CRC, 0, sizeof(CRC));
 	memset(TID, 0, sizeof(TID));
+	
 
 	printf(" EPC: ");
 	saveByteArray(&byteData[2], epcLength, buf);
@@ -341,6 +350,8 @@ int main(
 	RFID_RADIO_OPERATION_MODE	pmode;
 	RFID_RADIO_LINK_PROFILE		linkProfile;
 
+	RFID_RADIO_POWER_STATE      pradio;
+
 	RFID_MAC_REGION*			pRegion;
 	void*						pRegionConfig;
 
@@ -475,6 +486,7 @@ int main(
 
 	if (conectado == 1 && preparado == 1)
 	{
+	//	setAntennaPower(handle, 5.0);
 		while (conectado == 1) {
 			/*retval = recvfrom(client, msg, sizeof(msg), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);*/
 			retval = recv(client, msg, sizeof(msg), 0);

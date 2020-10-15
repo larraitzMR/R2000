@@ -90,7 +90,7 @@ void initializeRFID(RFID_RADIO_HANDLE handle, RFID_RADIO_ENUM* pEnum) {
 
 int getAntennaPower(RFID_RADIO_HANDLE handle) {
 
-	double power = 0.0;
+	double power = 5.0;
 
 	/* Get the state of each antenna.  For enabled antennas, get the configuration for that antenna.  */
 	for (antenna = 1; antenna < 5; ++antenna)
