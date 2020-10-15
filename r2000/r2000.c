@@ -326,7 +326,7 @@ DWORD WINAPI writeTagData(void* data) {
 	return 0;
 }
 
-
+#define BUFFER_SIZE 20
 
 int main(
 	int     argc,
@@ -356,6 +356,8 @@ int main(
 	void* pRegionConfig;
 
 
+
+
 	RFID_UNREFERENCED_LOCAL(argc);
 	RFID_UNREFERENCED_LOCAL(argv);
 
@@ -365,9 +367,9 @@ int main(
 	//SOCKADDR_IN  clientAddr;
 	struct sockaddr_in clientAddr, clientAddrRead;
 	char buffer[10];
-	char msg[20];
+	int msgsize = 20;
+	char msg[BUFFER_SIZE + 1];
 	int conectado = 0;
-	int preparado = 0;
 	int clientAddrSize = sizeof(clientAddr);
 	int clientAddrSizeRead = sizeof(clientAddrRead);
 	int retval;
@@ -453,12 +455,14 @@ int main(
 	while (conectado == 1) {
 		//printf("while\n");
 		/*retval = recvfrom(client, msg, sizeof(msg), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);*/
-		retval = recv(client, msg, sizeof(msg), MSG_WAITALL);
+		memset(msg, '\0', BUFFER_SIZE + 1);
+		retval = recv(client, msg, (BUFFER_SIZE), MSG_WAITALL);
 		//buscar #
+		//sprintf(msg, "%s", msg);
 		char* mens = strtok(msg, "#");
 		sprintf(msg, "%s", mens);
 
-		//printf("msg: %s\n", msg);
+		printf("msg WHILE: %s\n", msg);
 		if (strncmp(msg, "DISCONNECT", 10) == 0) {
 			printf("msg: %s\n", msg);
 			conectado = 0;
@@ -478,6 +482,7 @@ int main(
 			//string str = string(intStr);
 			//printf("POW: %s\n", pow);
 			send(client, pow, sizeof(pow), 0);
+			//printf("POWER SEND DONE");
 		}
 		else if (strncmp(msg, "SET_POWER", 9) == 0) {
 			printf("msg: %s\n", msg);
@@ -508,9 +513,9 @@ int main(
 			int* selAnt[4];
 			char selAntSend[5];
 			getConnectedAntennaPorts(handle, selAnt);
-			//printf("%s", selAnt);
-			sprintf(selAntSend, "%s#", selAnt);
-			send(client, selAntSend, 5, 0);
+			//sprintf(selAntSend, "%d#", selAnt);
+			//printf("%s", selAntSend);
+			send(client, strcat(selAnt, "#"), 5, 0);
 		}
 		else if (strncmp(msg, "SET_SEL_ANT", 11) == 0) {
 			printf("msg: %s\n", msg);
@@ -659,14 +664,12 @@ int main(
 			pthread_join(tid, NULL); */
 			send(client, "OK#", 3, 0);
 		}
-		memset(msg, 0, sizeof(msg));
-		//memset(mens, 0, sizeof(mens));
 
+	}
 
 		closesocket(client);
 		//closesocket(client2);
 		printf("Client disconnected!\n");
 		WSACleanup();
-	}
 
 } /* main */
