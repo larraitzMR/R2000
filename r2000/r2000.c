@@ -452,6 +452,16 @@ int main(
 		printf("CONECTADO AL READER\n");
 	}
 
+	server = configure_tcp_socket(5556);
+	if ((clientRead = accept(server, (struct sockaddr*) & clientAddrRead, &clientAddrSizeRead)) != INVALID_SOCKET)
+	{
+		printf("Conectado para enviar tags!\n");
+	}
+	//if (ioctlsocket(clientRead, FIONBIO, 1) != 0) {
+	//	printf("Non blocking error !\n");
+	//}
+	printf("\n");
+
 	while (conectado == 1) {
 		//printf("while\n");
 		/*retval = recvfrom(client, msg, sizeof(msg), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);*/
@@ -627,7 +637,6 @@ int main(
 			HANDLE thread = CreateThread(NULL, 0, startRead, clientRead, 0, NULL);
 			startReading = 1;
 			send(client, "OK#", 3, 0);
-
 		}
 		else if (strncmp(msg, "STOP_READING", 13) == 0) {
 			printf("msg: %s\n", msg);
