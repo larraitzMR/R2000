@@ -91,7 +91,7 @@ static void saveByteArray(const INT8U* bytes, int length, char* buf)
 	for (index = 0; index < length; ++index)
 	{
 		sprintf(b, "%.2x", bytes[index]);
-		//printf("%s", b);
+		printf("%s", b);
 		strcat(buf, b);
 		memset(b, 0, sizeof(b));
 	}
@@ -101,7 +101,7 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 {
 	int* indent = (int*)context;
 	RFID_UNREFERENCED_LOCAL(handle);
-	char mensaje[30];
+	char mensaje[31];
 	int index;
 	char buf[25];
 	char PC[5];
@@ -118,12 +118,8 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 
 	INT8U* byteData = (INT8U*)& inv->inv_data[0];
 	INT16U ri = (INT8U*)& inv->rssi;
-
-
 	//INT16U rsi = (INT16U*)& inv->rssi;
 	INT8 rs = (INT8*)& inv->rssi;
-
-
 	INT8U rssi = (INT8U*)& inv->rssi;
 
 	//	printf(" %u, %u, %u\n", &inv->rssi, ri, rs);
@@ -142,7 +138,11 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 	memset(TID, 0, sizeof(TID));
 
 
-	//printf(" EPC: ");
+	int* selAnt[4];
+	getEnabledAntena(handle, selAnt);
+	
+
+	printf(" EPC: ");
 	saveByteArray(&byteData[2], epcLength, buf);
 	if (strlen(buf) != 0) {
 		/*printf(" PC: ");
@@ -151,7 +151,7 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 		printf(" CRC: ");
 		saveByteArray(&byteData[2 + epcLength], 2, CRC);*/
 
-		//printf(" RSSI: ");
+		printf(" RSSI: ");
 		sprintf(rsi, "%u", rssi);
 		//printf("%s\n", rsi);
 
@@ -168,7 +168,7 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 
 
 		//sprintf(mensaje, "%s,%s,%s,%s", PC, buf, CRC, rsi);
-		sprintf(mensaje, "$%s,%s\n", buf, rsi);
+		sprintf(mensaje, "$%s,%s#\n", buf, rsi);
 		send(clientRead, mensaje, sizeof(mensaje), 0);
 		memset(mensaje, 0, sizeof(mensaje));
 
@@ -457,10 +457,6 @@ int main(
 	{
 		printf("Conectado para enviar tags!\n");
 	}
-	//if (ioctlsocket(clientRead, FIONBIO, 1) != 0) {
-	//	printf("Non blocking error !\n");
-	//}
-	printf("\n");
 
 	while (conectado == 1) {
 		//printf("while\n");
@@ -496,12 +492,9 @@ int main(
 		}
 		else if (strncmp(msg, "SET_POWER", 9) == 0) {
 			printf("msg: %s\n", msg);
-			int longitud = strlen(msg) - 9;
-			char* nuevo = (char*)malloc(sizeof(char) * (longitud + 1));
-			nuevo[longitud] = '\0';
-			strncpy(nuevo, msg + 9, longitud);
-			//printf("NUEVO: %s\n", nuevo);
-			double value = atof(nuevo);
+			char* mens = strtok(msg, " ");
+			char* pow = strtok(NULL, " ");
+			double value = atof(pow);
 			printf("RECIBIDO POWER: %.1f\n", value);
 			setAntennaPower(handle, value);
 			send(client, "OK#", 3, 0);
@@ -515,27 +508,37 @@ int main(
 			char selAnt[4];
 			char selAntSend[5];
 			getConnectedAntennaPorts(handle, selAnt);
-			sprintf(selAntSend, "%s#", selAnt);
+			//sprintf(selAntSend, "%s#", selAnt);
 			send(client, selAntSend, 4, 0);
 		}
 		else if (strncmp(msg, "GET_SEL_ANT", 11) == 0) {
 			printf("msg: %s\n", msg);
-			int* selAnt[4];
+			//int* selAnt[4];
+			char selAnt[5] = {0};
 			char selAntSend[5];
+			char p[2] = {'1','#'};
+			char a[2] = "1#";
 			getConnectedAntennaPorts(handle, selAnt);
-			//sprintf(selAntSend, "%d#", selAnt);
-			//printf("%s", selAntSend);
-			send(client, strcat(selAnt, "#"), 5, 0);
+			
+			//printf("%s", selAnt);
+			//send(client, strcat(selAnt, "#"), 5, 0);
+			
+			//selAnt[strlen(selAnt)] = '#';
+			//send(client, selAnt, strlen(selAnt), 0);
+			send(client, "12#", 3, 0);
+		
 		}
 		else if (strncmp(msg, "SET_SEL_ANT", 11) == 0) {
 			printf("msg: %s\n", msg);
-			char* nuevoDato;
-			int longitud = strlen(msg) - 11;
-			nuevoDato = (char*)malloc(sizeof(char) * (longitud + 1));
-			nuevoDato[longitud] = '\0';
-			strncpy(nuevoDato, msg + 11, longitud);
-			printf("CONECTADAS: %s\n", nuevoDato);
-			setSelectedAntena(handle, nuevoDato);
+			char* mens = strtok(msg, " ");
+			char* ant = strtok(NULL, "");
+			//char* nuevoDato;
+			//int longitud = strlen(msg) - 11;
+			//nuevoDato = (char*)malloc(sizeof(char) * (longitud + 1));
+			//nuevoDato[longitud] = '\0';
+			//strncpy(nuevoDato, msg + 11, longitud);
+			printf("CONECTADAS: %s\n", ant);
+			setSelectedAntena(handle, ant);
 			send(client, "OK#", 3, 0);
 		}
 		else if (strncmp(msg, "GET_INFO", 8) == 0) {
