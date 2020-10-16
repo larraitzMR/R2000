@@ -515,24 +515,11 @@ int main(
 			char p[2] = {'1','#'};
 			char a[2] = "1#";
 			getConnectedAntennaPorts(handle, selAnt);
-			
-			//printf("%s", selAnt);
-			//send(client, strcat(selAnt, "#"), 5, 0);
-			
-			selAnt[strlen(selAnt)] = '#';
-			send(client, selAnt, strlen(selAnt), 0);
-			//send(client, "12#", 3, 0);
-		
+			strcat(selAnt, "#");
+			send(client, selAnt, strlen(selAnt), 0);	
 		}
 		else if (strncmp(msg, "SET_SEL_ANT", 11) == 0) {
 			printf("msg: %s\n", msg);
-			//char* nuevoDato;
-			//int longitud = strlen(msg) - 11;
-			//nuevoDato = (char*)malloc(sizeof(char) * (longitud + 1));
-			//nuevoDato[longitud] = '\0';
-			//strncpy(nuevoDato, msg + 11, longitud);
-			//printf("CONECTADAS: %s\n", nuevoDato);
-
 			char* mens = strtok(msg, " ");
 			char* ant = strtok(NULL, "");
 			printf("CONECTADAS: %s\n", ant);

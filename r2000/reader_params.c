@@ -161,8 +161,10 @@ int setAntennaPower(RFID_RADIO_HANDLE handle, double power) {
 
 void getConnectedAntennaPorts(RFID_RADIO_HANDLE handle, char ant[4]) {
 
+	char sAnt[4];
+
+	memset(sAnt, '\0', sizeof(sAnt));
 	memset(ant, '\0', sizeof(ant));
-	int i = 0;
 	for (antenna = 1; antenna < 5; ++antenna)
 	{
 		antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
@@ -174,17 +176,14 @@ void getConnectedAntennaPorts(RFID_RADIO_HANDLE handle, char ant[4]) {
 
 		if (RFID_ANTENNA_PORT_STATE_DISABLED == antennaStatus.state)
 		{
-			//ant[antenna-1] = 0;
 			continue;
 		}
 		else {
 			printf("Antenna %d\n", antenna);
-			ant[i] = antenna;
-			i++;
-			//printf("#%d\n", ant[antenna-1]);
+			sprintf(sAnt, "%d", antenna);
+			strcat(ant, sAnt);
 		}
 	}
-	//ant[antenna] = "#";
 }
 
 void getEnabledAntena(RFID_RADIO_HANDLE handle, char ant[4]) {
@@ -230,7 +229,7 @@ void setSelectedAntena(RFID_RADIO_HANDLE handle, char *nuevoDato) {
 		numElementos = 1;
 	}
 	else {
-		for (p = strtok(nuevoDato + 1, " "); p; p = strtok(NULL, " ")) {
+		for (p = strtok(nuevoDato, " "); p; p = strtok(NULL, " ")) {
 			value = atoi(p);
 
 			if (value == 0) {}
