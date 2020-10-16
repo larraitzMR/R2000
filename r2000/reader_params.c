@@ -187,11 +187,12 @@ void getConnectedAntennaPorts(RFID_RADIO_HANDLE handle, char ant[4]) {
 }
 
 void getEnabledAntena(RFID_RADIO_HANDLE handle, char ant[4]) {
-	/*
+	
 	for (antenna = 1; antenna < 5; ++antenna)
 	{
 		antennaStatus.length = sizeof(RFID_ANTENNA_PORT_STATUS);
 		status = RFID_AntennaPortGetStatus(handle, antenna, &antennaStatus);
+		
 		if (RFID_STATUS_OK != status)
 		{
 			break;
@@ -210,7 +211,7 @@ void getEnabledAntena(RFID_RADIO_HANDLE handle, char ant[4]) {
 	}
 	for (int i = 0; i < 4; i++) {
 		printf("%s\n", &ant[i]);
-	}*/
+	}
 }
 
 void setSelectedAntena(RFID_RADIO_HANDLE handle, char *nuevoDato) {
