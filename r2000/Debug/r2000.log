@@ -1,42 +1,37 @@
 ﻿  r2000.c
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(129,24): warning C4047:  '<': 'int' es distinto en los niveles de direccionamiento indirecto de 'int *'
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(131,44): warning C4047:  'función': 'const char *const ' es distinto en los niveles de direccionamiento indirecto de 'INT32U'
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(131,44): warning C4024:  'vprintf': tipos distintos para el parámetro formal y el parámetro real 1
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(183,68): warning C4047:  'función': 'int' es distinto en los niveles de direccionamiento indirecto de 'INT8U *'
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(183,68): warning C4024:  'saveByteArray': tipos distintos para el parámetro formal y el parámetro real 2
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(140,1): warning C4047:  'inicializando': 'INT16U' es distinto en los niveles de direccionamiento indirecto de 'INT8U *'
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(142,1): warning C4047:  'inicializando': 'INT8' es distinto en los niveles de direccionamiento indirecto de 'INT8 *'
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(143,1): warning C4047:  'inicializando': 'INT8U' es distinto en los niveles de direccionamiento indirecto de 'INT8U *'
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(112,15): warning C4101:  'packet': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(109,7): warning C4101:  'b': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(105,6): warning C4101:  'index': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(135,41): warning C4101:  'ant': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(161,7): warning C4101:  'selAnt': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(199,7): warning C4101:  'msg': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(208,6): warning C4101:  'index': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(302,10): warning C4101:  'index': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(303,10): warning C4101:  'word': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(543,21): warning C4013:  'setSelectedAntena' sin definir; se supone que extern devuelve como resultado int
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(573,50): warning C4047:  'función': 'char *' es distinto en los niveles de direccionamiento indirecto de 'char *[20]'
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(573,50): warning C4024:  'setAdvancedOptions': tipos distintos para el parámetro formal y el parámetro real 3
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(630,63): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(636,62): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(643,65): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(663,66): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(359,30): warning C4101:  'antenna': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(368,27): warning C4101:  'linkProfile': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(356,26): warning C4101:  'pstate': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(372,19): warning C4101:  'pRegion': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(367,28): warning C4101:  'pmode': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(363,13): warning C4101:  'antennaPort': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(382,10): warning C4101:  'WSAData': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(358,30): warning C4101:  'index': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(364,24): warning C4101:  'pGroup': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(370,30): warning C4101:  'pradio': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(362,30): warning C4101:  'antennaConfig': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(361,30): warning C4101:  'antennaStatus': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(386,7): warning C4101:  'buffer': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(373,8): warning C4101:  'pRegionConfig': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(531,9): warning C4101:  'selAntSend': variable local sin referencia
-C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(531,9): warning C4101: C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(225) : warning C4716: 'stopRead': debe devolver un valor
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(177,68): warning C4047:  'función': 'int' es distinto en los niveles de direccionamiento indirecto de 'INT8U *'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(177,68): warning C4024:  'saveByteArray': tipos distintos para el parámetro formal y el parámetro real 2
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(134,1): warning C4047:  'inicializando': 'INT16U' es distinto en los niveles de direccionamiento indirecto de 'INT8U *'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(136,1): warning C4047:  'inicializando': 'INT8' es distinto en los niveles de direccionamiento indirecto de 'INT8 *'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(137,1): warning C4047:  'inicializando': 'INT8U' es distinto en los niveles de direccionamiento indirecto de 'INT8U *'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(110,7): warning C4101:  'b': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(106,6): warning C4101:  'index': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(155,7): warning C4101:  'selAnt': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(193,7): warning C4101:  'msg': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(202,6): warning C4101:  'index': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(296,10): warning C4101:  'index': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(297,10): warning C4101:  'word': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(537,21): warning C4013:  'setSelectedAntena' sin definir; se supone que extern devuelve como resultado int
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(567,50): warning C4047:  'función': 'char *' es distinto en los niveles de direccionamiento indirecto de 'char *[20]'
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(567,50): warning C4024:  'setAdvancedOptions': tipos distintos para el parámetro formal y el parámetro real 3
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(625,63): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(631,62): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(638,65): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(658,66): warning C4022:  'CreateThread': no coincide el puntero para el parámetro real 4
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(353,30): warning C4101:  'antenna': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(362,27): warning C4101:  'linkProfile': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(350,26): warning C4101:  'pstate': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(366,19): warning C4101:  'pRegion': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(361,28): warning C4101:  'pmode': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(357,13): warning C4101:  'antennaPort': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(376,10): warning C4101:  'WSAData': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(352,30): warning C4101:  'index': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(358,24): warning C4101:  'pGroup': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(364,30): warning C4101:  'pradio': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(356,30): warning C4101:  'antennaConfig': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(355,30): warning C4101:  'antennaStatus': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(380,7): warning C4101:  'buffer': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(367,8): warning C4101:  'pRegionConfig': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(525,9): warning C4101:  'selAntSend': variable local sin referencia
+C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(525,9): warning C4101: C:\Users\Propietario\Documents\GitHub\R2000\r2000\r2000.c(219) : warning C4716: 'stopRead': debe devolver un valor
   r2000.vcxproj -> C:\Users\Propietario\Documents\GitHub\R2000\Debug\r2000.exe

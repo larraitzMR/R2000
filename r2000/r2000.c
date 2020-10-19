@@ -78,6 +78,7 @@ INT16U                                  writeData[MAX_WORD_LENGTH];
 RFID_18K6C_READ_PARMS                   readParms;
 RFID_18K6C_WRITE_PARMS                  writeParms;
 CONTEXT_PARMS                           context;
+INT32U									antena;
 char toSend[25];
 char dataHex[4];
 
@@ -109,32 +110,25 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 	char b[1];
 	char rsi[4];
 	char TID[25];
-	const INT8U* packet;
+	//const INT8U* packet;
+
 
 	RFID_PACKET_COMMON* common = (RFID_PACKET_COMMON*)pBuffer; 
 	INT16U packetType = MacToHost16(common->pkt_type);
 
+
+	if (packetType == RFID_PACKET_TYPE_ANTENNA_BEGIN) {
+		RFID_PACKET_ANTENNA_BEGIN* antennabegin = (RFID_PACKET_ANTENNA_BEGIN*)pBuffer;
+
+		antena = MacToHost32(antennabegin->antenna);
+		/*INT8 a = MacToHost32(antennabegin->antenna);
+		INT8U ant = MacToHost32(antennabegin->antenna);*/
+	}
+
+
 	RFID_PACKET_18K6C_INVENTORY* inv = (RFID_PACKET_18K6C_INVENTORY*)pBuffer;
 	int length = ((MacToHost16(common->pkt_len) - 3) * 4) - (common->flags >> 6);
 
-	RFID_PACKET_ANTENNA_BEGIN* antennabegin = (RFID_PACKET_ANTENNA_BEGIN*)pBuffer;
-
-
-
-	INT32U an = MacToHost32(antennabegin->antenna);
-
-	va_list list;
-	int i;
-	va_start(list, MacToHost32(antennabegin->antenna));
-	for (i = 0; i < indent; i++)
-		printf("  ");
-	vprintf(MacToHost32(antennabegin->antenna), list);
-	//PrintIndentedLine(indent, "Antenna ID: %u\n",
-	//	MacToHost32(antennabegin->antenna));
-
-	RFID_PACKET_18K6C_INVENTORY_ROUND_END* ant;
-		
-	
 	
 	INT8U* byteData = (INT8U*)& inv->inv_data[0];
 	INT16U ri = (INT8U*)& inv->rssi;
@@ -186,7 +180,7 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 		printf("\n");
 
 		//sprintf(mensaje, "%s,%s,%s,%s", PC, buf, CRC, rsi);
-		sprintf(mensaje, "$%s,%s#", buf, rsi);
+		sprintf(mensaje, "$%s,%s,%u#", buf, rsi, antena);
 		send(clientRead, mensaje, strlen(mensaje), 0);
 
 	}
@@ -546,7 +540,7 @@ int main(
 		else if (strncmp(msg, "GET_INFO", 8) == 0) {
 			printf("msg: %s\n", msg);
 			char info[9];
-			char infoSend[10];
+			char infoSend[9];
 			//getReaderInfo(handle, info);
 			sprintf(infoSend, "%s#", info);
 			send(client, "2.4.240#", sizeof(infoSend), 0);
@@ -626,6 +620,7 @@ int main(
 			send(client, "OK#", 3, 0);
 		}
 		else if (strncmp(msg, "START_READING", 13) == 0) {
+			antena = 0;
 			printf("msg: %s\n", msg);
 			HANDLE thread = CreateThread(NULL, 0, startRead, clientRead, 0, NULL);
 			startReading = 1;
