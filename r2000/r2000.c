@@ -37,6 +37,7 @@ SOCKET clientRead;
 RFID_RADIO_HANDLE           handle;
 
 RFID_18K6C_INVENTORY_PARMS              inventoryParms;
+RFID_PACKET_18K6C_INVENTORY* inv;
 INT32U                                  inventoryFlags = 0;
 int                                     indent_level = 0;
 
@@ -124,66 +125,71 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 		/*INT8 a = MacToHost32(antennabegin->antenna);
 		INT8U ant = MacToHost32(antennabegin->antenna);*/
 	}
+	else if (packetType == RFID_PACKET_TYPE_18K6C_INVENTORY) {
+
+		RFID_PACKET_18K6C_INVENTORY* inv = (RFID_PACKET_18K6C_INVENTORY*)pBuffer;
+		int length = ((MacToHost16(common->pkt_len) - 3) * 4) - (common->flags >> 6);
 
 
-	RFID_PACKET_18K6C_INVENTORY* inv = (RFID_PACKET_18K6C_INVENTORY*)pBuffer;
-	int length = ((MacToHost16(common->pkt_len) - 3) * 4) - (common->flags >> 6);
+		INT8U* byteData = (INT8U*)& inv->inv_data[0];
+		//INT16U ri = (INT8U*)& inv->rssi;
+		//INT16U rsi = (INT16U*)& inv->rssi;
+		INT8 rssi = (INT8*)& inv->rssi;
+		//printf("RSSI: %d", rssi);
+		//INT8U rs = (INT8U*)& inv->rssi;
 
-	
-	INT8U* byteData = (INT8U*)& inv->inv_data[0];
-	INT16U ri = (INT8U*)& inv->rssi;
-	//INT16U rsi = (INT16U*)& inv->rssi;
-	INT8 rs = (INT8*)& inv->rssi;
-	INT8U rssi = (INT8U*)& inv->rssi;
+		//	printf(" %u, %u, %u\n", &inv->rssi, ri, rs);
 
-	//	printf(" %u, %u, %u\n", &inv->rssi, ri, rs);
-
-	int epcLength = 0;
-	int tidLength = 0;
-	if (((common->flags >> 2) & 0x03) == 0x01)  /* M4 TID (12 bytes) is included in data */
-	{
-		tidLength = 12;
-	}
-	epcLength = length - tidLength - 4;  /* -4 for 16-bit PC and CRC */
-
-	memset(PC, 0, sizeof(PC));
-	memset(buf, 0, sizeof(buf));
-	memset(CRC, 0, sizeof(CRC));
-	memset(TID, 0, sizeof(TID));
-	memset(mensaje, 0, sizeof(mensaje));
-
-	int* selAnt[4];
-	//getEnabledAntena(handle, selAnt);
-	
-
-	printf(" EPC: ");
-	saveByteArray(&byteData[2], epcLength, buf);
-	if (strlen(buf) != 0) {
-		/*printf(" PC: ");
-		saveByteArray(&byteData[0], 2, PC);
-
-		printf(" CRC: ");
-		saveByteArray(&byteData[2 + epcLength], 2, CRC);*/
-
-		printf(" RSSI: ");
-		sprintf(rsi, "%u", rssi);
-		printf("%s\n", rsi);
-
-		/* if TID is included, print it out */
-		if (tidLength != 0)
+		int epcLength = 0;
+		int tidLength = 0;
+		if (((common->flags >> 2) & 0x03) == 0x01)  /* M4 TID (12 bytes) is included in data */
 		{
-			//PrintByteArrayNoFormatting(&byteData[4 + epcLength], tidLength, ",", NULL); /* +4 to get past PC and CRC */
-			printf(" TID: ");
-			saveByteArray(&byteData[4 + epcLength], &byteData[4 + epcLength], TID);
-			printf("%s\n", TID);
+			tidLength = 12;
 		}
-		printf("\n");
+		epcLength = length - tidLength - 4;  /* -4 for 16-bit PC and CRC */
 
-		//sprintf(mensaje, "%s,%s,%s,%s", PC, buf, CRC, rsi);
-		sprintf(mensaje, "$%s,%s,%u#", buf, rsi, antena);
-		send(clientRead, mensaje, strlen(mensaje), 0);
+		memset(PC, 0, sizeof(PC));
+		memset(buf, 0, sizeof(buf));
+		memset(CRC, 0, sizeof(CRC));
+		memset(TID, 0, sizeof(TID));
+		memset(mensaje, 0, sizeof(mensaje));
 
+		int* selAnt[4];
+		//getEnabledAntena(handle, selAnt);
+
+
+		printf(" EPC: ");
+		saveByteArray(&byteData[2], epcLength, buf);
+
+		if (strlen(buf) != 0) {
+			/*printf(" PC: ");
+			saveByteArray(&byteData[0], 2, PC);
+
+			printf(" CRC: ");
+			saveByteArray(&byteData[2 + epcLength], 2, CRC);*/
+
+			printf(" RSSI: ");
+			printf("%d\n", rssi);
+			/*sprintf(rsi, "%u", rssi);
+			printf("%s\n", rsi);*/
+
+			/* if TID is included, print it out */
+			if (tidLength != 0)
+			{
+				//PrintByteArrayNoFormatting(&byteData[4 + epcLength], tidLength, ",", NULL); /* +4 to get past PC and CRC */
+				printf(" TID: ");
+				saveByteArray(&byteData[4 + epcLength], &byteData[4 + epcLength], TID);
+				printf("%s\n", TID);
+			}
+			printf("\n");
+
+			//sprintf(mensaje, "%s,%s,%s,%s", PC, buf, CRC, rsi);
+			sprintf(mensaje, "$%s,%d,%u#", buf, rssi, antena);
+			send(clientRead, mensaje, strlen(mensaje), 0);
+
+		}
 	}
+	
 	return 0;
 }
 
@@ -479,7 +485,7 @@ int main(
 		char* mens = strtok(msg, "#");
 		sprintf(msg, "%s", mens);
 
-		printf("msg WHILE: %s\n", msg);
+		//printf("msg WHILE: %s\n", msg);
 		if (strncmp(msg, "DISCONNECT", 10) == 0) {
 			printf("msg: %s\n", msg);
 			conectado = 0;
