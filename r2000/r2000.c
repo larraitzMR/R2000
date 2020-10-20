@@ -285,12 +285,64 @@ DWORD WINAPI stopRead(void* data) {
 //} /* RfidTagAccessCallback */
 
 
+RFID_18K6C_SINGULATION_FIXEDQ_PARMS     singulationParms;
+
 
 DWORD WINAPI readTagData(void* data) {
 
 	INT32U  index;
 	INT16U  word;
 	INT8U* packet;
+	char selAnt[4];
+	getConnectedAntennaPorts(handle, selAnt);
+
+	/* The MAC uses the fixed-Q singulation algorithm for tag read and write, */
+		/* so we'll configure the algorithm so that it works well for a single    */
+		/* tag and even though it is not necessary, set the singulation algorithm */
+		/* to fixed Q.                                                            */
+	singulationParms.length =
+		sizeof(RFID_18K6C_SINGULATION_FIXEDQ_PARMS);
+	singulationParms.qValue = 0;
+	singulationParms.retryCount = 0;
+	singulationParms.toggleTarget = 0;
+	singulationParms.repeatUntilNoTags = 0;
+	status = RFID_18K6CSetSingulationAlgorithmParameters(
+		handle,
+		RFID_18K6C_SINGULATION_ALGORITHM_FIXEDQ,
+		&singulationParms);
+	if (RFID_STATUS_OK != status)
+	{
+		fprintf(
+			stderr,
+			"ERROR: RFID_18K6CSetSingulationAlgorithmParameters returned 0x%.8x\n",
+			status);
+	}
+	status = RFID_18K6CSetCurrentSingulationAlgorithm(
+		handle,
+		RFID_18K6C_SINGULATION_ALGORITHM_FIXEDQ);
+	if (RFID_STATUS_OK != status)
+	{
+		fprintf(
+			stderr,
+			"ERROR: RFID_18K6CSetCurrentSingulationAlgorithm returned 0x%.8x\n",
+			status);
+	}
+
+	/* Configure the MAC for the data response mode (packets) we want to see */
+	status = RFID_RadioSetResponseDataMode(
+		handle,
+		(RFID_RESPONSE_TYPE)RFID_RESPONSE_TYPE_DATA,
+		RFID_RESPONSE_MODE_COMPACT);
+
+	if (RFID_STATUS_OK != status)
+	{
+		fprintf(
+			stderr,
+			"ERROR: RFID_RadioSetResponseDataMode returned 0x%.8x\n",
+			status);
+	}
+
+
 
 	context.succesfulAccessPackets = 0;
 	context.pReadData = readData;
