@@ -227,77 +227,62 @@ DWORD WINAPI stopRead(void* data) {
 
 #define BYTES_PER_LEN_UNIT  4
 
-INT32S RfidTagReadCallback(
-	RFID_RADIO_HANDLE   handle,
-	INT32U              bufferLength,
-	const INT8U* pBuffer,
-	void* context
-)
-{
-	INT32S          status = 0;
-	CONTEXT_PARMS* pParms = (CONTEXT_PARMS*)context;
-	RFID_PACKET_18K6C_INVENTORY* inv = (RFID_PACKET_18K6C_INVENTORY*)pBuffer;
-
-	RFID_UNREFERENCED_LOCAL(handle);
-
-	/* Enable to get a trace of the received packets */
-#if 0
-	PacketTrace(bufferLength, pBuffer, &indent);
-#endif 
-
-	/* Process the packets in the buffer until either the entire buffer is    */
-	/* processed or there is insufficient data                                */
-	while (!status && bufferLength)
-	{
-		/* Get the packet pointer and determine the length in bytes           */
-		const RFID_PACKET_COMMON* pPacket =
-			(const RFID_PACKET_COMMON*)pBuffer;
-		INT32U                      packetLength =
-			(MacToHost16(pPacket->pkt_len) * BYTES_PER_LEN_UNIT) +
-			sizeof(RFID_PACKET_COMMON);
-
-		/* Verify that the buffer is large enough for the packet              */
-		if (bufferLength < packetLength)
-		{
-			fprintf(
-				stderr,
-				"ERROR: Remaining buffer = %d bytes, need %d bytes\n",
-				bufferLength,
-				packetLength);
-			status = -1;
-		}
-		/* Otherwise, if it is a tag access packet, we want to inspect it     */
-		else if (RFID_PACKET_TYPE_18K6C_TAG_ACCESS ==
-			MacToHost16(pPacket->pkt_type))
-		{
-			printf("TAG ACCESS");
-		}
-		else if (RFID_PACKET_TYPE_COMMAND_END ==
-			MacToHost16(pPacket->pkt_type))
-		{
-			const RFID_PACKET_COMMAND_END* pEndPkt = (const RFID_PACKET_COMMAND_END*)pBuffer;
-
-			status = pEndPkt->status;
-		}
-		else if (RFID_PACKET_TYPE_18K6C_TAG_ACCESS) {
-			printf("TAG ACCESS");
-
-		
-
-		} 
-		else if (RFID_PACKET_TYPE_COMMAND_BEGIN) {
-			printf("COMMAND BEGIN");
-		}
-
-
-		/* Adjust the buffer length and pointer based upon the packet size    */
-		bufferLength -= packetLength;
-		pBuffer += packetLength;
-	}
-
-	return status;
-} /* RfidTagAccessCallback */
-
+//INT32S RfidTagAccessCallback(
+//	RFID_RADIO_HANDLE   handle,
+//	INT32U              bufferLength,
+//	const INT8U* pBuffer,
+//	void* context
+//)
+//{
+//	INT32S          status = 0;
+//	CONTEXT_PARMS* pParms = (CONTEXT_PARMS*)context;
+//	RFID_PACKET_18K6C_INVENTORY* inv = (RFID_PACKET_18K6C_INVENTORY*)pBuffer;
+//
+//	RFID_UNREFERENCED_LOCAL(handle);
+//
+//	/* Process the packets in the buffer until either the entire buffer is    */
+//	/* processed or there is insufficient data                                */
+//	while (!status && bufferLength)
+//	{
+//		/* Get the packet pointer and determine the length in bytes           */
+//		const RFID_PACKET_COMMON* pPacket =	(const RFID_PACKET_COMMON*)pBuffer;
+//		INT32U  packetLength =(MacToHost16(pPacket->pkt_len) * BYTES_PER_LEN_UNIT) +
+//			sizeof(RFID_PACKET_COMMON);
+//
+//		/* Verify that the buffer is large enough for the packet              */
+//		if (bufferLength < packetLength)
+//		{
+//			fprintf(
+//				stderr,
+//				"ERROR: Remaining buffer = %d bytes, need %d bytes\n",
+//				bufferLength,
+//				packetLength);
+//			status = -1;
+//		}
+//		/* Otherwise, if it is a tag access packet, we want to inspect it     */
+//		else if (RFID_PACKET_TYPE_18K6C_TAG_ACCESS ==
+//			MacToHost16(pPacket->pkt_type))
+//		{
+//			ProcessTagAccessPacket(
+//				(const RFID_PACKET_18K6C_TAG_ACCESS*)pPacket,
+//				context);
+//		}
+//		else if (RFID_PACKET_TYPE_COMMAND_END ==
+//			MacToHost16(pPacket->pkt_type))
+//		{
+//			const RFID_PACKET_COMMAND_END* pEndPkt = (const RFID_PACKET_COMMAND_END*)pBuffer;
+//
+//			status = pEndPkt->status;
+//		}
+//
+//
+//		/* Adjust the buffer length and pointer based upon the packet size    */
+//		bufferLength -= packetLength;
+//		pBuffer += packetLength;
+//	}
+//
+//	return status;
+//} /* RfidTagAccessCallback */
 
 
 
@@ -307,8 +292,6 @@ DWORD WINAPI readTagData(void* data) {
 	INT16U  word;
 	INT8U* packet;
 
-;
-
 	context.succesfulAccessPackets = 0;
 	context.pReadData = readData;
 	readParms.length = sizeof(readParms);
@@ -317,19 +300,10 @@ DWORD WINAPI readTagData(void* data) {
 	readParms.readCmdParms.count = g_WordLength;
 	readParms.readCmdParms.offset = g_StartOffset;
 	readParms.accessPassword = 0;
-	readParms.common.pCallback = RfidTagReadCallback;
+	readParms.common.pCallback = RfidTagAccessCallback;
 	readParms.common.pCallbackCode = NULL;
 	readParms.common.tagStopCount = 0;
 	readParms.common.context = &context;
-
-	//RFID_PACKET_COMMON* common = (RFID_PACKET_COMMON*)packet;
-	//INT16U packetType = MacToHost16(common->pkt_type);
-
-	//if (packetType == RFID_PACKET_TYPE_18K6C_TAG_ACCESS) {
-
-	//}
-
-	//
 
 	/* Keep attempting to read   from the tag's memory until it     */
 	/* succeeds or until the tag-read function fails for some reason.         */

@@ -135,7 +135,7 @@ INT32S RfidTagAccessCallback(
 
 	/* Process the packets in the buffer until either the entire buffer is    */
 	/* processed or there is insufficient data                                */
-	while (!status && bufferLength)
+ 	while (!status && bufferLength)
 	{
 		/* Get the packet pointer and determine the length in bytes           */
 		const RFID_PACKET_COMMON*   pPacket =
