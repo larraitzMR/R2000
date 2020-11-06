@@ -55,7 +55,7 @@ typedef INT32U  RWE_OPTIONS;
 
 #define  DEF_WORD_LENGTH     6
 #define  DEF_START_OFFSET    2
-#define  DEF_MEM_BANK        RFID_18K6C_MEMORY_BANK_TID
+#define  DEF_MEM_BANK        RFID_18K6C_MEMORY_BANK_EPC
 #define  DEF_RWE             RWE_WRITE 
 
 #define RWE_READ_STR         "READ"
@@ -93,7 +93,7 @@ static void saveByteArray(const INT8U* bytes, int length, char* buf)
 	for (index = 0; index < length; ++index)
 	{
 		sprintf(b, "%.2x", bytes[index]);
-		printf("%s", b);
+		//printf("%s", b);
 		strcat(buf, b);
 		memset(b, 0, sizeof(b));
 	}
@@ -106,11 +106,11 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 	char mensaje[50];
 	int index;
 	char buf[25];
-	char PC[5];
-	char CRC[5];
+	char PC[5]; 
 	char b[1];
 	char rsi[4];
 	char TID[25];
+	char rssi[3];
 	//const INT8U* packet;
 
 
@@ -120,7 +120,7 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 	memset(buf, 0, sizeof(buf));
 	memset(TID, 0, sizeof(TID));
 	memset(mensaje, 0, sizeof(mensaje));
-
+	memset(rssi, 0, sizeof(rssi));
 
 
 	if (packetType == RFID_PACKET_TYPE_ANTENNA_BEGIN) {
@@ -139,17 +139,23 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 		INT8U* byteData = (INT8U*)& inv->inv_data[0];
 		//INT16U ri = (INT8U*)& inv->rssi;
 		//INT16U rsi = (INT16U*)& inv->rssi;
-		INT8 rssi = (INT8*)& inv->rssi;
+		//INT8 rssi = (INT8*)& inv->rssi;
 		//printf("RSSI: %d", rssi);
 		//INT8U rs = (INT8U*)& inv->rssi;
 
-		INT32 nb_rssi32 = (INT32*)& inv->nb_rssi;
-		INT8 nb_rssi = (INT8*)& inv->nb_rssi;
+		/*INT32 nb_rssi32 = (INT32*)& inv->nb_rssi;
+		
 		INT8U nb_rssiu = (INT8U*)& inv->nb_rssi;
-		printf("NB_RSSI: %d", nb_rssi);
+		
 
-		INT8U pr = &inv->nb_rssi;
+		INT8U pr = &inv->nb_rssi;*/
 		//	printf(" %u, %u, %u\n", &inv->rssi, ri, rs);
+
+		//INT8 nb_rssi = (INT8*)&inv->nb_rssi;
+		//printf("NB_RSSI: %d\n", nb_rssi);
+
+		saveByteArray((INT8*)&inv->nb_rssi, 1, rssi);
+		printf("RSSI: %s\n", rssi);
 
 		int epcLength = 0;
 		int tidLength = 0;
@@ -159,23 +165,24 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 		}
 		epcLength = length - tidLength - 4;  /* -4 for 16-bit PC and CRC */
 
+		memset(buf, 0, sizeof(buf));
 	
 		int* selAnt[4]; 
 		//getEnabledAntena(handle, selAnt);
 
 
-		printf(" EPC: ");
 		saveByteArray(&byteData[2], epcLength, buf);
+		printf("EPC: %s", buf);
 
 		if (strlen(buf) != 0) {
 			/*printf(" PC: ");
 			saveByteArray(&byteData[0], 2, PC);
 
-			printf(" CRC: ");
+			printf(" CRC: "); 
 			saveByteArray(&byteData[2 + epcLength], 2, CRC);*/
 
-			printf(" RSSI: ");
-			printf("%d\n", rssi);
+			/*printf(" RSSI: "); 
+			printf("%d\n", rssi);*/
 			/*sprintf(rsi, "%u", rssi);
 			printf("%s\n", rsi);*/
 
@@ -190,8 +197,13 @@ INT32S PacketCallbackFunction(RFID_RADIO_HANDLE handle, INT32U bufferLength, con
 			printf("\n");
 
 			//sprintf(mensaje, "%s,%s,%s,%s", PC, buf, CRC, rsi);
-			sprintf(mensaje, "$%s,%s,%u#", buf, &inv->nb_rssi, antena);
+			sprintf(mensaje, "$%s,%s,%u#", buf, rssi, antena);
 			send(clientRead, mensaje, strlen(mensaje), 0);
+
+			memset(buf, 0, sizeof(buf));
+			memset(TID, 0, sizeof(TID));
+			memset(mensaje, 0, sizeof(mensaje));
+			memset(rssi, 0, sizeof(rssi));
 
 		}
 	}
