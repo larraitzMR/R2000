@@ -230,67 +230,59 @@ DWORD WINAPI stopRead(void* data) {
 	startReading = 0;
 }
 
+// Function to convert hexadecimal to decimal
+int* hexadecimalToDecimal(char hexVal[], INT16U* data)
+{
+	int len = 24;
+
+	// Initializing base value to 1, i.e 16^0 
+	int base = 1;
+	int cont = 0;
+	int write = 5;
+
+	int dec_val = 0;
+	INT16U writeData[6];
+
+	// Extracting characters as digits from last character 
+	for (int i = len - 1; i >= 0; i--)
+	{
+		// if character lies in '0'-'9', converting  
+		// it to integral 0-9 by subtracting 48 from 
+		// ASCII value. 
+		if (hexVal[i] >= '0' && hexVal[i] <= '9')
+		{
+			dec_val += (hexVal[i] - 48) * base;
+
+			// incrementing base by power 
+			base = base * 16;
+		}
+
+		// if character lies in 'A'-'F' , converting  
+		// it to integral 10 - 15 by subtracting 55  
+		// from ASCII value 
+		else if (hexVal[i] >= 'A' && hexVal[i] <= 'F')
+		{
+			dec_val += (hexVal[i] - 55) * base;
+
+			// incrementing base by power 
+			base = base * 16;
+		}
+		cont++;
+		if (cont == 4) {
+			writeData[write] = dec_val;
+			data[write] = dec_val;
+			write--;
+			cont = 0;
+			dec_val = 0;
+			base = 1;
+		}
+	}
+	//data = writeData;
+
+	return data;
+}
 
 #define BYTES_PER_LEN_UNIT  4
-
-//INT32S RfidTagAccessCallback(
-//	RFID_RADIO_HANDLE   handle,
-//	INT32U              bufferLength,
-//	const INT8U* pBuffer,
-//	void* context
-//)
-//{
-//	INT32S          status = 0;
-//	CONTEXT_PARMS* pParms = (CONTEXT_PARMS*)context;
-//	RFID_PACKET_18K6C_INVENTORY* inv = (RFID_PACKET_18K6C_INVENTORY*)pBuffer;
-//
-//	RFID_UNREFERENCED_LOCAL(handle);
-//
-//	/* Process the packets in the buffer until either the entire buffer is    */
-//	/* processed or there is insufficient data                                */
-//	while (!status && bufferLength)
-//	{
-//		/* Get the packet pointer and determine the length in bytes           */
-//		const RFID_PACKET_COMMON* pPacket =	(const RFID_PACKET_COMMON*)pBuffer;
-//		INT32U  packetLength =(MacToHost16(pPacket->pkt_len) * BYTES_PER_LEN_UNIT) +
-//			sizeof(RFID_PACKET_COMMON);
-//
-//		/* Verify that the buffer is large enough for the packet              */
-//		if (bufferLength < packetLength)
-//		{
-//			fprintf(
-//				stderr,
-//				"ERROR: Remaining buffer = %d bytes, need %d bytes\n",
-//				bufferLength,
-//				packetLength);
-//			status = -1;
-//		}
-//		/* Otherwise, if it is a tag access packet, we want to inspect it     */
-//		else if (RFID_PACKET_TYPE_18K6C_TAG_ACCESS ==
-//			MacToHost16(pPacket->pkt_type))
-//		{
-//			ProcessTagAccessPacket(
-//				(const RFID_PACKET_18K6C_TAG_ACCESS*)pPacket,
-//				context);
-//		}
-//		else if (RFID_PACKET_TYPE_COMMAND_END ==
-//			MacToHost16(pPacket->pkt_type))
-//		{
-//			const RFID_PACKET_COMMAND_END* pEndPkt = (const RFID_PACKET_COMMAND_END*)pBuffer;
-//
-//			status = pEndPkt->status;
-//		}
-//
-//
-//		/* Adjust the buffer length and pointer based upon the packet size    */
-//		bufferLength -= packetLength;
-//		pBuffer += packetLength;
-//	}
-//
-//	return status;
-//} /* RfidTagAccessCallback */
-
-
 RFID_18K6C_SINGULATION_FIXEDQ_PARMS     singulationParms;
 
 
@@ -476,8 +468,53 @@ DWORD WINAPI readTagData(void* data) {
 	return 0;
 }
 
-DWORD WINAPI writeTagData(void* data) {
+//DWORD WINAPI writeTagData(void* data) {
+//
+//	INT32U  index;
+//	INT16U  word;
+//
+//	context.succesfulAccessPackets = 0;
+//	writeParms.length = sizeof(writeParms);
+//	writeParms.writeType = RFID_18K6C_WRITE_TYPE_SEQUENTIAL;
+//	writeParms.writeCmdParms.sequential.length = sizeof(RFID_18K6C_WRITE_SEQUENTIAL_CMD_PARMS);
+//	writeParms.writeCmdParms.sequential.bank = RFID_18K6C_MEMORY_BANK_EPC;
+//	writeParms.writeCmdParms.sequential.count = 6;
+//	writeParms.writeCmdParms.sequential.offset = 2;
+//	//EN VEZ DE WRITE DATA, PASARLE EL BUFFER DE LO LEIDO.
+//	writeParms.writeCmdParms.sequential.pData = (char)data;
+//	writeParms.accessPassword = 0;
+//	writeParms.common.pCallback = RfidTagAccessCallback;
+//	writeParms.common.pCallbackCode = NULL;
+//	writeParms.common.tagStopCount = 0;
+//	writeParms.common.context = &context;
+//	/* Keep attempting to write  to the tag's  memory until it      */
+//		   /* succeeds or until the tag-write function fails for some reason.        */
+//	accessAPIRetryCount = 0;
+//	while ((RFID_STATUS_OK == status) &&
+//		!context.succesfulAccessPackets &&
+//		(accessAPIRetryCount < maxAccessAPIRetries))
+//	{
+//		printf("Attempting to write \n\n");
+//		status = RFID_18K6CTagWrite(handle, &writeParms, 0);
+//		if (RFID_STATUS_OK != status)
+//		{
+//			fprintf(
+//				stderr,
+//				"ERROR: RFID_18K6CTagWrite returned 0x%.8x\n",
+//				status);
+//		}
+//		RFID_MacClearError(handle);
+//		accessAPIRetryCount++;
+//	}
+//	if (!context.succesfulAccessPackets)
+//	{
+//		printf("Tag access write failed\n");
+//	}
+//
+//	return 0;
+//}
 
+void writeTagData(INT16U data[6]) {
 	INT32U  index;
 	INT16U  word;
 
@@ -485,11 +522,11 @@ DWORD WINAPI writeTagData(void* data) {
 	writeParms.length = sizeof(writeParms);
 	writeParms.writeType = RFID_18K6C_WRITE_TYPE_SEQUENTIAL;
 	writeParms.writeCmdParms.sequential.length = sizeof(RFID_18K6C_WRITE_SEQUENTIAL_CMD_PARMS);
-	writeParms.writeCmdParms.sequential.bank = g_MemBank;
-	writeParms.writeCmdParms.sequential.count = g_WordLength;
-	writeParms.writeCmdParms.sequential.offset = g_StartOffset;
+	writeParms.writeCmdParms.sequential.bank = RFID_18K6C_MEMORY_BANK_EPC;
+	writeParms.writeCmdParms.sequential.count = 6;
+	writeParms.writeCmdParms.sequential.offset = 2;
 	//EN VEZ DE WRITE DATA, PASARLE EL BUFFER DE LO LEIDO.
-	writeParms.writeCmdParms.sequential.pData = writeData;
+	writeParms.writeCmdParms.sequential.pData = data;
 	writeParms.accessPassword = 0;
 	writeParms.common.pCallback = RfidTagAccessCallback;
 	writeParms.common.pCallbackCode = NULL;
@@ -522,7 +559,9 @@ DWORD WINAPI writeTagData(void* data) {
 	return 0;
 }
 
-#define BUFFER_SIZE 20
+
+
+#define BUFFER_SIZE 70
 
 int main(
 	int     argc,
@@ -563,7 +602,7 @@ int main(
 	//SOCKADDR_IN  clientAddr;
 	struct sockaddr_in clientAddr, clientAddrRead;
 	char buffer[10];
-	int msgsize = 20;
+	int msgsize = 40;
 	char msg[BUFFER_SIZE + 1];
 	int conectado = 0;
 	int clientAddrSize = sizeof(clientAddr);
@@ -573,7 +612,6 @@ int main(
 
 	double power = 0.0;
 	char* nuevo[20];
-	char* write[5];
 
 	/* Initialialize the RFID library                                         */
 	status = RFID_Startup(&version, 0);
@@ -826,24 +864,21 @@ int main(
 		}
 		else if (strncmp(msg, "WRITE_EPC", 9) == 0) {
 			printf("msg: %s\n", msg);
-			char* token;
-			int i = 0;
+			char EPCBuf[24];
+			INT16U writeData[6];
 
-			/* get the first token */
-			token = strtok(msg, " ");
+			char* mens = strtok(msg, " ");
+			char* ant = strtok(NULL, " ");
+			char* t = strtok(NULL, " ");
+			char* TID = strtok(NULL, " ");
+			char* EPC = strtok(NULL, " ");
+			sprintf(EPCBuf, "%s", EPC);
 
-			/* walk through other tokens */
-			while (token != NULL) {
-				printf(" %s\n", token);
-				strcpy(write[i], token);
-				token = strtok(NULL, " ");
-				i++;
-			}
 			startReading = 0;
-			HANDLE thread = CreateThread(NULL, 0, writeTagData, clientRead, 0, NULL);
-			/*pthread_t tid;
-			pthread_create(&tid, NULL, hello, "hello world");
-			pthread_join(tid, NULL); */
+			int* ptr = hexadecimalToDecimal(EPC, writeData);
+			//hexToDec(EPC);
+			writeTagData(writeData);
+			//HANDLE thread = CreateThread(NULL, 0, writeTagData, EPCBuf, 0, NULL);
 			send(client, "OK#", 3, 0);
 		}
 
